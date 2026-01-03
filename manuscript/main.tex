@@ -1,0 +1,149 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% This is a "template" model document for submission to the
+%% American Chemical Society (ACS).
+%%
+%% The guidance here contains information about how you may wish to
+%% modify it to match the requirements of various ACS journals. The
+%% ACS do *not* typeset accepted articles using LaTeX, so there is
+%% no specific class required.
+%%
+%% This template deliberately does *not* seek to reproduce
+%% the layout of the typeset journal: this is explicitly not
+%% required by the ACS for LaTeX submissions.
+%% Please report any issues with the template at
+%% https://github.com/josephwright/acs-template/issues
+%%
+%% Released under the Creative Commons 0 license
+%% https://creativecommons.org/public-domain/cc0/
+%% 
+%% Copyight (c) 2025 Joseph Wright
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[letterpaper, 12pt]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Font setup - delete if you are using LuaLaTeX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[T1]{fontenc}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Adjust the margins and allow for line spacing
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{geometry}
+\geometry{margin = 1in}
+\usepackage{setspace}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Reference support
+%%
+%% The recommended method for producing the reference section is
+%% to use biblatex. If you wish to use a classical BibTeX
+%% approach, this is easiest to achieve using the achemso package.
+%% In that case, you should remove the biblatex lines.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% You can adjust the printing of DOI, article title, etc. using
+% package options, e.g. "doi = true"; see the biblatex manual for
+% details of adjusting the number of authors printed, e.g.
+% "maxnames = 15" to print no more than 15 authors.
+%\usepackage[style = chem-acs]{biblatex}
+%\addbibresource{references.bib}
+% If you are using classical BibTeX, remove the above lines and 
+% uncomment:
+\usepackage{achemso}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Graphic inclusion and scheme and chart support
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx}
+\usepackage{float}
+\newfloat{scheme}{htbp}{los}
+\floatname{scheme}{Scheme}
+\floatname{chart}{Chart}
+\newfloat{graph}{htbp}{loh}
+\usepackage{subcaption}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Common support packages
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{chemformula} % Formulas using \ch{}
+% or
+\usepackage[version = 4]{mhchem} % Formulas using \ce{}
+
+\usepackage{array}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Many journals require that sections are unnumbered: this 
+%% is activated here
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setcounter{secnumdepth}{-1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Place any additional macros here.  Please use \newcommand* where
+%% possible, and avoid layout-changing macros (which are not used
+%% when typesetting).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand*\mycommand[1]{\texttt{\emph{#1}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Author and title data:
+%% the authblk package is currently the simplest way to provide this
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{authblk}
+\author[1]{Ethan M. Sunshine}
+\author[1]{Naixin Lyu}
+\author[1]{Suraj Botcha}
+\author[1]{Eesha Kulkarni}
+\author[1]{Shreya Pagaria}
+\author[1]{Victor Alves}
+\author[1]{John R. Kitchin*}
+
+\affil[1]{Department of Chemical Engineering, Carnegie Mellon University, Pittsburgh, PA}
+
+\title{Benchmarking Machine Learning Anomaly Detection Methods on the Tennessee Eastman Process Dataset}
+% Use the \date command for email address(s) of corresponding authors
+\date{*Email: jkitchin@andrew.cmu.edu}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=blue,      
+    urlcolor=blue,
+    citecolor=blue,
+}
+\usepackage{booktabs}
+
+\begin{document}
+
+\maketitle
+
+%% Double spacing for sending to reviewers. Remove this for the final copy.
+\doublespacing
+
+
+\begin{abstract}
+% The Tennessee Eastman Process (TEP) dataset serves as a standard benchmark in process systems engineering due to its complex, multivariate, and dynamic process behavior in important subfields such as process control and fault diagnosis. In this study, we explore a comprehensive suite of machine learning and deep learning methods for multivariate time-series anomaly detection on the TEP dataset, which includes both fault-free and faulty operating conditions across 20 distinct fault types of which 17 are analyzed in our work. Our methodology begins with data preprocessing steps, including standardization and encoding, to manage the high-dimensional nature of the dataset comprising 55 process variables. We evaluate a range of models, starting with XGBoost as a classical machine learning baseline to sequence deep learning approaches including LSTM-based classifiers, LSTM-FCN, convolutional-based transformer classifier, and we further introduce a Transformer-Kalman (TransKal) classifier. Additionally, hybrid architectures such as LSTM Autoencoders and Convolutional Autoencoders as binary classifiers are investigated to enhance detection robustness. All supervised models were trained and validated on combined fault-free and faulty datasets to ensure generalizability across diverse operating scenarios, whereas semi-supervised models were trained exclusively on fault-free data to learn normal process behavior and detect deviations during inference. We developed a unified protocol using accuracy, F1-score, and complementary metrics for consistent model evaluation. Our proposed TransKal classifier demonstrated superior diagnostic performance, achieving an overall accuracy of 99.34\% and an F1-Score of 99.37\%, outperforming all other evaluated baseline models for the 17 faults examined in this work. This study provides comparative insights into model performance, interpretability and reliability for real-time industrial fault detection applications and offers a clear benchmark for designing real-time FDD systems in chemical process industries.
+The Tennessee Eastman Process (TEP) dataset is a standard benchmark for process control and fault diagnosis due to its complex, multivariate dynamics. We evaluate a broad range of machine learning and deep learning methods for multivariate time-series anomaly detection on TEP, covering 17 of its 20 fault types. After preprocessing the 55-variable dataset, we benchmark classical models such as XGBoost and sequence models including LSTM classifiers, LSTM-FCN, a convolutional transformer, and our proposed Transformer-Kalman (TransKal) classifier. We also assess hybrid LSTM and convolutional autoencoder approaches. Supervised models were trained on combined normal and faulty data, while semi-supervised models used only normal data. TransKal achieved the best performance, with 99.37\% accuracy and 99.37\% F1, providing a strong benchmark for real-time industrial FDD.
+\end{abstract}
+
+\section*{Keywords}
+
+Anomaly Detection, Fault Detection, Process Monitoring, Machine Learning, Industry 4.0
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Start the main part of the manuscript here.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{body}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% If you are using classical BibTeX rather than biblatex,
+%% remove the \printbibliography and uncomment the \bibliograpy one
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setstretch{1}
+% \printbibliography
+
+\bibliography{references.bib}
+
+\newpage
+
+\end{document}

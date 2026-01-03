@@ -1,0 +1,288 @@
+\section{Introduction}
+
+The advent of Industry 4.0, marked by widespread sensor deployment and enhanced data generation capabilities, has fundamentally reshaped chemical manufacturing. This transformation enables enhanced operational safety, efficiency, and asset reliability via advanced analytics \cite{lomov_fault_2021}. Among these developments, Fault Detection and Diagnosis (FDD) systems have become a cornerstone of predictive maintenance strategies in large-scale chemical facilities. Effective FDD frameworks can ideally identify early-stage process deviations before they develop into major operational disruptions, thereby mitigating unplanned downtime and associated economic impacts \cite{an_practical_2015, zhao_novel_2025}.
+
+To evaluate FDD methodologies, researchers frequently employ complex industrial benchmarks such as the Tennessee Eastman Process (TEP), which simulates the nonlinear dynamics and feedback control loops of a chemical plant \cite{downs_plant-wide_1993, chen_issues_2018}. The choice of methodology is dictated by the learning paradigm, which in turn depends on the availability of labeled data and the desired diagnostic goal. At one end of this spectrum, supervised learning relies on comprehensive datasets containing accurately labeled instances for both normal and faulty operation, enabling multi-class fault diagnosis (i.e., identifying which specific fault is occurring). At the opposite end lies semi-supervised learning, where models are trained solely on normal operating data and tasked with detecting deviations that indicate potential faults \cite{chandola_anomaly_2009}. This paradigm is particularly practical for industrial settings, where exhaustive fault labeling is rarely feasible.
+
+Historically, FDD research began with Multivariate Statistical Process Monitoring techniques including  Shewhart control charts, as well as Principal Component Analysis (PCA), in which the latter models the variance of normal data to establish a statistical baseline \cite{yelamos_performance_2009, grbovic_cold_2013}. However, such linear methods proved inadequate in modeling the intricate systems that present challenging nonlinear dynamics, including TEP, often failing to detect a significant portion of faults and required extensive manual feature engineering \cite{yin_comparison_2012, gao_improved_2016}. The field then shifted to classical machine learning (e.g., Support Vector Machines (SVMs)\cite{moura_failure_2011} and XGBoost\cite{harinarayan_xfddc_2022}), which demonstrated superior classification but struggled with temporal dependencies and scalability \cite{amin_process_2018}.
+
+The introduction of deep learning enabled automatic hierarchical feature extraction from raw sensor data. This advanced FDD on both fronts. For the semi-supervised detection task, models like Autoencoders (AEs) gained prominence \cite{cheng_novel_2019}. By learning to reconstruct only normal data, they can flag any data they fail to reconstruct as an anomaly. For the supervised diagnosis task, researchers turned to models designed to process sequential data, as a fault’s unique signature often unfolds over time. Models such as Recurrent Neural Networks (RNNs), Long Short-Term Memory (LSTM) networks, and, more recently, transformer architectures have proven exceptionally effective at learning the distinct temporal patterns required to diagnose the specific fault type \cite{hochreiter_long_1997, arunthavanathan_deep_2021, zhang_generalized_2022}.
+
+Despite this proliferation of advanced models, a critical gap persists in the literature: it is virtually impossible to fairly compare their performance. Published results are often inconsistent and incomplete. For example, while one study \cite{verma_deep_2022} on a supervised LSTM model reports an exceptional accuracy of 99.2\% , and second one \cite{lomov_fault_2021} highlights a recall of 99.88\% using a Gated Recurrent Unit (GRU), a third study leveraging image processing techniques reports a leading F1-score of 98.81\% \cite{hajihosseini_fault_2018}. These results are not comparable as they are derived from different data splits and, crucially, potentially inadequately balanced dataset subsets. Many traditional TEP benchmarks are derived from single simulation runs, where normal operating data vastly outweighs the limited samples available for each fault class, skewing model evaluation. An operator cannot know if the model with the highest accuracy also suffers from low recall on a critical fault, or if the model with the highest recall generates an unacceptable number of false alarms.
+
+Considering this gap, our study makes two primary contributions. First, we establish a unified framework for reproducible and fair comparison of a set of models. This begins with the creation of a new, curated TEP dataset derived from hundreds of independent simulation runs rather than a single continuous dynamic runs. This approach allows us to construct distinct training, validation, and test sets that strike a deliberate balance between normal and faulty data, avoiding the biases of traditional single-run benchmarks. We then apply a standardized evaluation protocol (i.e., consistent data splits and a comprehensive set of metrics) to all models. Second, we introduce and benchmark novel hybrid architectures against established baselines within this rigorous framework. By systematically evaluating models for both multi-class diagnosis and binary detection, our research provides a clear and comprehensive benchmark to guide the design of robust and reliable FDD systems for demanding industrial environments.
+
+\section{Methods}
+
+\subsection{Benchmark Dataset: The Tennessee Eastman Process (TEP)}
+
+The Tennessee Eastman Process (TEP) serves as the benchmark for this study. The typical process flow diagram (PFD) and a typical control structure \cite{Chiang2001, lyman_plant-wide_1995} is depicted in Figure \ref{fig:TEP_flowsheet}. TEP has been extensively used in the process control community for plantwide control studies \cite{mcavoy_base_1994, ye_optimal_1995, larsson_self-optimizing_2001, assali_optimal_2010}, being considered by researchers and practitioners one of the first successful and complete benchmarks of control structure studies of plantwide systems. In addition, its use as a benchmark for fault diagnosis algorithms became common in the previous two decades as reported in the literature \cite{gertler_fault_2017, ge_review_2017}. The system is described in Figure \ref{fig:TEP_flowsheet} with a typical control structure, including regulatory and supervisory control layers, as well as the enumerated measurements typically described in the TEP benchmarks found in the literature \cite{Chiang2001, lyman_plant-wide_1995}. TEP simulates a chemical plant with dynamics and interactions representative of industrial settings \cite{downs_plant-wide_1993}, while simulating a chemical process that produces two desired liquid products (G and H) from four gaseous reactants (A, C, D, and E), with an inert component (B) and byproduct (F), following the reaction network described in Eq. \ref{eq:reaction_network}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/TEP_PFD.pdf}
+    \caption[TEP process schematic.]{TEP process schematic. Bolder streams represent main process streams. Grey dashed lines represent control signals. Recycles and utility streams are represented by solid, non-bolded lines. The schematic presented here is based on Ref. \cite{Chiang2001} with control structure \# 2 as reported in this reference, originally available in \cite{lyman_plant-wide_1995}.}
+    \label{fig:TEP_flowsheet}
+\end{figure}
+
+
+\begin{equation}
+\begin{aligned} \label{eq:reaction_network}
+\mathrm{A}(\mathrm{g})+\mathrm{C}(\mathrm{g})+\mathrm{D}(\mathrm{g}) & \rightarrow \mathrm{G}(\mathrm{liq}), \\
+\mathrm{A}(\mathrm{g})+\mathrm{C}(\mathrm{g})+\mathrm{E}(\mathrm{g}) & \rightarrow \mathrm{H}(\mathrm{liq}), \\
+\mathrm{A}(\mathrm{g})+\mathrm{E}(\mathrm{g}) & \rightarrow \mathrm{F}(\mathrm{liq}), \\
+3 \mathrm{D}(\mathrm{g}) & \rightarrow 2 \mathrm{~F}(\mathrm{liq}) .
+\end{aligned}
+\end{equation}
+
+In addition, the process comprises five primary operational units: a reactor, a product condenser, a vapor-liquid separator, a product stripper, and a recycle compressor. The reactor converts multiple gaseous and liquid reactants into the desired products (G and H) through an exothermic reaction network as described in Eq \ref{eq:reaction_network}. Afterward, the reactor products are sent to the condenser, which cools the reactor dowstream and  condenses overhead vapors. This resulting two-phase stream is sent to the separator, where non-condensable gases are recycled while the condensed liquid stream proceeds to the product stripper. In the stripper, light components are removed to achieve target product purity specifications, and the overhead vapors are also recompressed and recycled back to the reactor.
+
+
+
+\begin{table}[ht] 
+    \centering
+    \caption{Description of Tennessee Eastman Process disturbance variables (IDVs), based on Ref. \cite{Chiang2001}.}
+    \label{table:TEP_faults}
+    \begin{tabular}{@{}lll@{}}
+        \toprule
+        Variable & Description & Type \\
+        \midrule
+        IDV1  & A/C Feed Ratio & Step \\
+        IDV2  & B Composition  & Step \\
+        IDV3  & D Feed Temperature & Step \\
+        IDV4  & Cooling Water Inlet Temperature (Reactor)          & Step \\
+        IDV5  & Cooling Water Inlet Temperature (Condenser)        & Step \\
+        IDV6  & A Feed                            & Step \\
+        IDV7  & C Header Pressure Loss & Step \\
+        IDV8  & A, B, C Feed Composition              & Random Variation \\
+        IDV9  & D Feed Temperature                     & Random Variation \\
+        IDV10 & C Feed Temperature                     & Random Variation \\
+        IDV11 & Cooling Water Inlet Temperature (Reactor)          & Random Variation \\
+        IDV12 & Cooling Water Inlet Temperature  (Condenser)       & Random Variation \\
+        IDV13 & Reaction Network Kinetics                                 & Slow Drift \\
+        IDV14 & Cooling Water Valve (Reactor)                      & Sticking \\
+        IDV15 & Cooling Water Valve (Condenser)                    & Sticking \\
+        IDV16 & Unknown                                           & \\
+        IDV17 & Unknown                                           & \\
+        IDV18 & Unknown                                           & \\
+        IDV19 & Unknown                                           & \\
+        IDV20 & Unknown                                           & \\
+        IDV21 & Valve stuck at steady state operating point & Constant Position \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The TEP simulation includes 20 programmed process faults (IDV1–IDV20) in addition to the normal operating condition (IDV0), described in Table \ref{table:TEP_faults}, which was based directly on the descriptions detailed in the literature \cite{Chiang2001}. These faults represent a variety of disturbance types, such as step changes, random variations, slow drifts, and sticking valves. Following common practice in TEP-based FDD research \cite{zhao_novel_2025}, this study focuses on 17 of the 20 faults, excluding faults IDV3, IDV9, and IDV15 due to their minimal deviation from normal process behavior, resulting in longer detection times \cite{shams_fault_2010}. The multiclass classification task in this work, therefore, involves identifying the normal state and the remaining 17 distinct fault types. 
+
+
+
+
+
+\subsection{Data Preparation}
+
+The TEP process is monitored through 52 variables, consisting of 11 manipulated variables (e.g., valve positions, flow rates) and 41 measured variables (e.g., temperature, pressure, level, and component concentrations). A sampling interval of 3 minutes was used for most process measurements.
+
+While standard TEP datasets often consist of a single simulation run for training and testing, this approach provides insufficient data for training robust deep learning models and may lead to biased performance evaluation \cite{lomov_fault_2021}. To overcome this limitation, this study utilized the enriched TEP dataset developed by Rieth et al \cite{chen_issues_2018}. This extended dataset was generated by running the simulation with different random seeds, providing hundreds of independent runs for the normal state and for each fault type. This data-rich environment allows for the creation of distinct training, validation, and testing sets, reducing the bias between sample statistics and true population parameters and enabling a more rigorous evaluation of FDD models. We established a standardized preprocessing pipeline to prepare the raw TEP data for ingestion by temporal deep learning models. This pipeline involves data scaling, sequence generation, and a data splitting strategy.
+
+\subsubsection{Data Scaling}
+
+The data were normalized using $z$-score normalization. Importantly, we calculated the mean and variance parameters exclusively from the training dataset and then applied to the validation and test sets. This prevents data leakage from the hold-out sets into the training process, ensuring an unbiased evaluation of the model’s generalization capabilities.
+
+\subsubsection{Sequence Generation for Temporal Models}
+
+The raw time-series data were transformed into supervised learning samples using a sliding time window approach. This technique segments a continuous time-series of length $T$ into overlapping sequences of a fixed window length $w$. In this study, we used a lookback of $w$ time steps. Each window, containing w consecutive time steps of the 52 process variables, becomes a single input sample for the model. The corresponding label for each window is assigned based on the process state at the final time step of that window. This procedure transforms the original data into a 3D array of the shape $$(samples, timesteps, features)$$ which is the required input format for temporal models like LSTMs and transformers \cite{zhao_novel_2025}.
+
+\subsubsection{Train-Validation-Test Split}
+
+While the enriched dataset by Rieth et al \cite{chen_issues_2018} provides a large pool of simulation runs, the full dataset is imbalanced; there are many more runs for fault-free conditions than faulty conditions. To create a balanced and robust subset for evaluation, we sampled from this pool to partition the data into training, validation, and test sets for both supervised and semi-supervised learning approaches. The datasets for supervised models were constructed to contain examples of both normal and faulty conditions. The training set comprises 320 fault-free simulation runs and 340 faulty runs, corresponding to 20 unique simulation runs for each of the 17 fault types. The validation set comprises 160 fault-free runs and 170 faulty runs, corresponding to 10 unique simulation runs for each of the 17 fault types. For semi-supervised learning datasets, in line with the common definition of semi-supervised learning in anomaly detection, the training and validation sets for these models contain only normal operating data \cite{chandola_anomaly_2009, schmidl_anomaly_2022}. The Training Set comprised 320 fault-free simulation runs, whereas the validation set comprised 160 fault-free runs. A unified testing dataset is used to evaluate the performance of all models, regardless of their training paradigm. This ensures that all comparisons are made on the same unseen data under identical conditions. The test set consists of 495 total simulation runs, broken down into 240 fault-free runs and 255 faulty runs (15 runs for each of the 17 fault types). In each test simulation, the process runs under normal conditions for eight hours before a fault is introduced.
+
+\subsection{Metrics}
+
+Multiple evaluation metrics were employed to assess model performance. To handle the multi-class nature of the FDD task, we calculated standard metrics on a per-class basis using a one-vs-all approach \cite{powers_evaluation_2020}. These metrics include Accuracy, Precision, Recall, and the F1-Score. To summarize the F1-score across all classes, we utilized three aggregation methods. As our primary metric for model comparison, we report the F1 (Weighted) score, as it computes a weighted average where each class's score is weighted by its support (the number of true instances for that class). We also consider the F1 (Macro) score, which computes an unweighted average and treats all classes equally, and the F1 (Micro) score, which calculates metrics globally by counting total true positives, false negatives, and false positives.
+
+For a comprehensive view of classifier performance, we also report the macro-averaged Area Under the Curve (AUC). This includes the ROC-AUC (Macro), the unweighted mean of the Area Under the Receiver Operating Characteristic curve for each class, and the PR-AUC (Macro), the unweighted mean of the Area Under the Precision-Recall curve, which is particularly informative for imbalanced datasets.
+
+\subsection{Models - Multiclass}
+
+This section outlines the principles and architectures of the diagnostic models evaluated in this study. Each model is designed to process the sequential, multivariate TEP data, but employs different mechanisms to learn temporal patterns and classify fault conditions.
+
+\subsubsection{XGBoost}
+
+XGBoost (Extreme Gradient Boosting) is a supervised decision tree ensemble method that combines multiple weak learners to create a strong predictive model. The model was configured with 250 estimators (trees) to ensure sufficient model capacity, while maintaining generalization \cite{chen_xgboost_2016}. A learning rate of 0.1 was used to control the contribution of each tree to the overall ensemble, providing a balance between convergence speed and stability. The maximum tree depth was set to 6. 
+
+\subsubsection{LSTM}
+
+LSTM networks were used for their ability to capture temporal dependencies and dynamic patterns in process data \cite{hochreiter_long_1997}, making them well-suited for fault detection in time-series systems. Unlike traditional feedforward models that treat each observation independently, LSTMs can learn how process variables evolve over time and retain information from previous states, which is critical for modeling gradual or delayed fault signatures. 
+
+We model each window as a short temporal sequence and encode it with a recurrent neural network. The input to the network is a tensor of shape 30 $\times$ 52 per sample. A bidirectional LSTM layer with 128 units and tanh activation processes the sequence in both forward and backward directions. A subsequent unidirectional LSTM with 128 units collapses the encoded sequence to a single 128-dimensional representation that summarizes the entire window. This representation feeds a small feed-forward classifier: a dense layer with 300 units and ReLU activation followed by dropout ($p=0.5$) for regularization, and a final dense layer with 21 units and softmax activation that produces a probability distribution over fault classes 0–20. We train the model with Adam \cite{kingma2015adam} and categorical cross-entropy, using batch size 256 for up to 200 epochs. We apply early stopping on the validation loss with patience = 5 and restore the best weights, so training stops when progress stalls and we keep the best-performing checkpoint. We report accuracy (and optionally macro-F1 to avoid bias toward class 0). 
+
+\subsubsection{LSTM FCN}
+
+A long short-term memory fully convolutional neural network (LSTM-FCN) \cite{karim_insights_2019} is an ensemble machine learning model that captures both temporal dependencies and spatial patterns. An essential part of the working of the model is the use of an LSTM recurrent block in conjunction with the FCN block. A single LSTM layer with 24 hidden units extracts sequential dependencies among the features. A dropout layer with rate $p=0.5$ follows. The output of this branch encodes long-term temporal information. In parallel, the input sequence is processed by three one-dimensional convolutional layers with filter sizes of 32, 24, and 16, and kernel sizes of 5, 3, and 3, respectively. Each convolutional layer is followed by batch normalization and a ReLU activation. A spatial dropout layer with $p=0.3$ is applied after the first convolution. The final convolutional output is reduced using global average pooling, yielding a fixed-length feature vector that captures short-term local dependencies among process variables. The temporal and convolutional feature vectors are concatenated and passed through a dense layer with ReLU activation $max(32, 2 N_c)$ units, where $N_c$ is the number of fault classes). A dropout layer ($p=0.5$) is applied again for regularization. The final classification layer employs a softmax activation to output the probability distribution across all classes.
+
+The model is optimized using the AdamW optimizer \cite{loshchilov2019decoupling} with a learning rate of $1\times 10^{-4}$ and weight decay of $1\times 10^{-5}$. The network minimizes the sparse categorical cross-entropy loss function and is trained using mini-batches of size 64 and 40 epochs.
+
+\subsubsection{Convolutional Neural Network + Transformer}
+
+This model is a supervised multi-class fault classification model combining the strengths of both a convolutional neural network and a Transformer. This model leverages both convolutional feature extraction and transformer-based sequence modeling for long range time dependencies. The input to the model consisted of multivariate time-series sequences of length 30, in batches of 64, with each sequence including all process variables (64 × 30 × 52). The model begins with a convolutional front-end to extract local temporal features. The first one-dimensional convolution maps the input features to 32 channels using a kernel size of 5 and padding of 2, followed by batch normalization, ReLU activation, and dropout. The second convolution expanded the representation to 64 channels, again with batch normalization, ReLU activation, and dropout, preserving the temporal dimension. The encoded sequences (64 × 30 × 64) were then passed to a Transformer encoder consisting of two stacked \texttt{nn.TransformerEncoderLayers}. Each layer used 4 self-attention heads, a feedforward dimension of 64, dropout of $p=0.4$, and layer normalization applied before each sublayer (\texttt{norm\_first=True}). This stage captured longer-range temporal dependencies across the input sequence and interactions between features. After the Transformer, features were pooled across the temporal dimension using an adaptive average pooling layer to produce a fixed-length vector representation for each sequence (64 × 64). This vector was passed through a fully connected layer with ReLU activation and dropout, followed by a final linear layer projecting to the number of fault classes. The overall architecture can be summarized as a convolutional feature extractor followed by a transformer sequence modeler followed by a fully connected classifier. The Transformer-based classifier was trained in a supervised manner over 50 epochs with early stopping to minimize the cross-entropy loss between predicted and true class labels. Model parameters were optimized using the Adam optimizer with a learning rate of $1\times10^{-4}$ and a weight decay of $1\times10^{-3}$. Mini-batch training was performed using PyTorch DataLoaders with a batch size of 64, and separate validation sequences were used to monitor model generalization at each epoch. Gradient norms were clipped to a maximum of 1.0 to stabilize training and prevent exploding gradients. The cosine annealing scheduler was used, which adapted the learning rate based on the validation loss to improve convergence. Early stopping with a patience of 7 epochs was employed to prevent overfitting, with the model weights yielding the lowest validation loss saved for evaluation. Training progress was tracked using both loss and classification accuracy for the training and validation sets.
+
+\subsubsection{Tranformer-Kalman Filter (TransKal) Model}
+
+To use the power of attention mechanisms for capturing long-range dependencies in time-series data, we developed a hybrid architecture combining a Transformer encoder with a Kalman filter for post-processing. The Transformer architecture is adept at weighing the influence of different time steps, while the Kalman filter smooths the output predictions to enhance temporal stability and reduce noise \cite{rostami_enhancing_2025}.
+
+The TransKal model is composed of three main stages: input processing, a Transformer encoder core, and a classification head. The input sequence, with dimensions ($batch\_size$, $lookback$, $features$), is first passed through a linear embedding layer. This layer  projects the 52 input features into the Transformer's internal working dimension, $dmodel = 32$. This transforms the input tensor's shape to ($batch\_size$, $lookback$, 32), allowing it to be processed by the subsequent self-attention layers. To make the model ``order-aware,'' we inject sequence information by adding standard sinusoidal positional encodings to the embeddings \cite{vaswani2017attention}. Each time step thus receives a unique positional signal, allowing the model to learn patterns based on the data's temporal structure. The core of the model is a Transformer encoder built with a multi-head self-attention mechanism. The architecture consists of a single encoder layer with 2 attention heads ($nhead = 2$) and a dropout rate of $p=0.3$. The output of the encoder is then passed through an adaptive average pooling layer, which aggregates the features across the time dimension to produce a single feature vector representing the entire sequence. The fixed-size feature vector from the pooling layer is fed into a multi-layer perceptron (MLP) for final classification. This head consists of two hidden layers (with 64 and 32 neurons, respectively) with ReLU activations, each followed by dropout and batch normalization. The final layer is a linear layer that outputs logits for the 18 classes (17 faults + 1 normal).
+
+The model applies a Kalman filter as a post-processing step to the sequence of output probabilities from the Transformer. The raw, frame-by-frame predictions of a classifier can be noisy, exhibiting high-frequency fluctuations, which is problematic for real-time monitoring. The Kalman filter addresses this by smoothing the predictions based on a defined state-space model \cite{welch_introduction_1995}. To apply the filter in our context, we first define the ``state'' ($x_k$) as the ``true'' but unobservable, underlying probability vector of the system being in a specific fault state at time step k. Correspondingly, we define the ``measurement'' ($z_k$) as the ``noisy'' probability vector (i.e., the softmax output) produced by the transformer's classification head at that same time step $k$. Our model is built on the key physical assumption of temporal consistency: the true fault state of an industrial process does not change erratically between adjacent steps due to process inertia. We therefore formulate a simple state transition model where the current true state is assumed to be persistent, $x_k = I \cdot x_{k-1} + w_k$, and a measurement model where the Transformer's output is a direct, noisy observation of that state, $z_k = I \cdot x_k + v_k$. The Kalman filter then recursively estimates the ``true'' state $x_k$ by running a predict-update cycle, optimally balancing its trust between its own prediction (based on $x_{k-1}$) and the new, unreliable measurement ($z_k$). This balance is controlled by two noise covariance parameters. The process noise covariance ($Q$) represents our uncertainty about the state transition model, while the measurement noise covariance ($R$) represents our uncertainty in the Transformer's output. Unlike standard filters with fixed parameters, we implemented an adaptive Kalman filter scheme. The parameter $R$ is dynamically adjusted at each time step based on the entropy of the Transformer's prediction distribution. When the model is uncertain (high entropy), $R$ is increased relative to its base value ($R_{base}=0.1$), causing the filter to trust its own stable state estimate ($x_{k-1}$) more than the noisy measurement ($z_k$). Conversely, when the model is confident (low entropy), $R$ decreases, allowing faster adaptation to new data. $Q$ is initialized at a base value of $10^{-5}$. Following the adaptive Kalman filtering step, a final sliding window smoothing mechanism (window size = 5) is applied to the output probabilities. This voting-based smoothing further mitigates transient classification flips and ensures temporal consistency in the final diagnostic output.
+
+We trained the model using the AdamW optimizer with a weight decay of $10^{-3}$ and an initial learning rate of $5\times10^{-4}$. A \texttt{ReduceLROnPlateau} scheduler was used to decrease the learning rate if the validation loss stagnated. Categorical Cross-Entropy with label smoothing (0.1) was used as the loss function to discourage the model from making over-confident predictions. In addition to architectural choices like reduced complexity, dropout, and batch normalization, we applied gradient clipping with a max norm of 1.0 to prevent exploding gradients. Training was halted if the validation loss did not improve for 7 consecutive epochs, and the weights from the epoch with the best validation loss were restored for the final model. The TransKal model configuration was determined through systematic ablation studies of architectural parameters, training strategies, and post-processing settings. Detailed analysis of parameter effects is discussed in the results section. We performed an initial study on a baseline Transformer to evaluate the impact of key architectural choices. The parameters investigated included the model dimension ($dmodel$ tested from 16 to 64), the number of attention heads ($nhead$ tested from 1 to 4), the number of encoder layers (1 to 3), the dropout rate (0.0 to 0.5), and the pooling method (“avg”, “max”, or “last”). We conducted a progressive ablation study to quantify the contribution of each regularization and training optimization technique. Starting from a minimal baseline, components were added sequentially: label smoothing, weight decay, learning rate scheduling, early stopping, data augmentation, and gradient clipping. We ran dedicated studies to optimize the TransKal-specific parameters. Additional details are available in the Supporting Information. We evaluated the model’s performance across a range of lookback window sizes [5, 10, 15, 20, 25, 30] to determine the optimal temporal context length. We evaluated the filter’s performance across a range of values for the process noise covariance ($Q$ from $10^{-6}$ to $10^{-2}$) and measurement noise covariance ($R$ from 0.01 to 0.5).
+
+\subsection{Models - Binary Classification}
+
+With industrial data, we may not have labeled data for each type of fault. This is where semi-supervised techniques such as autoencoders can be used to identify anomalies. Autoencoders are trained exclusively on normal operating conditions, learning a compressed representation of the underlying process behavior. During inference, the model reconstructs incoming sequences and faults are detected whenever the reconstruction error exceeds a predefined threshold. This allows the model to identify previously unseen faults without requiring fault-specific labels. 
+
+Both the autoencoders were trained in a self-supervised manner, where the input sequences served as their own reconstruction targets ($X_{train} \rightarrow X_{train}$). The input consisted of fixed-length multivariate sequences of 30 time steps and 52 sensor features. Training and validation losses were monitored to assess convergence and generalization.
+
+\subsubsection{LSTM Autoencoder}
+
+The encoder uses a single LSTM layer (64 hidden units, tanh activation, $return\_sequence=False$) to compress the input into a 64-dimensional latent vector. This vector is then broadcast using \texttt{RepeatVector(30)} and passed through a mirroring decoder LSTM (64 units, tanh, $return\_Sequence=True$) followed by a \texttt{TimeDistributed(Dense(52))} layer to reconstruct the sequence. Training is self-supervised ($X_{train} \rightarrow X_{train}$) using mean squared error (MSE) loss and the Adam optimizer ($lr =10^{-3}$, $batch size = 64$, up to 50 epochs) with early stopping ($patience = 8$) based on validation loss.
+
+\subsubsection{Convolutional Autoencoder}
+
+The encoder applies two 1D convolutional layers ($kernel size = 3$, $stride = 1$, $padding = 1$) with 64 and 128 channels respectively, both using ReLU activation, to capture local, spatial correlations. The encoded representation is fed to a Transformer Encoder block ($nhead = 4$, $dim = 128$, $ff\_dim=32$, $dropout=0.05$) to model long-range temporal dependencies. The decoder mirrors the encoder with two 1D convolutional layers (128→64→$input\_dim$) to reconstruct the original sequence. The model is trained using MSE loss and Adam optimizer ($lr = 0.0005$) in mini-batches in PyTorch. Training and validation losses are monitored to ensure convergence and prevent overfitting. This autoencoder design combines CNNs’ ability to extract local process correlations with Transformers’ capacity to capture global temporal structure, making it well-suited for industrial anomaly detection.
+
+\section{Results and Discussion}
+
+This section presents and discusses the performance of the developed FDD models. It systematically evaluates each of the proposed architectures in dedicated subsections. For each model, a detailed analysis is provided, covering its overall performance and specific findings from its evaluation. The section culminates in a comprehensive comparative analysis to benchmark the relative strengths and weaknesses of all the implemented models.
+
+We present results for multiclass and binary classification of faults. Ideally, one knows the possible faults, and multiclass identification is preferred for these. However, there may be unknown faults that cannot be labeled. For these, a binary classification is more appropriate.
+
+\subsection{Multiclass Fault Detection}
+
+Table \ref{table:multiclass_fault_detection} presents the combined results for all multiclass models, evaluated on the unified test set with a window length of 30.  Three of the models, LSTM-FCN, CNN + Transformer and TransKal had scores above 99\%. The proposed TransKal model had the best score in all key metrics.
+
+\begin{table}
+    \centering
+    \begin{tabular}{l P{2.5cm} P{2.5cm} P{2.5cm} P{2cm}}
+    \hline
+    \textbf{Models} & \textbf{F1-Score (weighted) (\%)} & \textbf{Precision (weighted) (\%)} & \textbf{Recall (weighted) (\%)} & \textbf{Accuracy (\%)} \\
+    \hline
+    XGBoost            & 94.17 & 94.49 & 94.40 & 94.40 \\
+    LSTM               & 98.74 & 98.77 & 98.74 & 98.74 \\
+    LSTM-FCN           & 99.13 & 99.15 & 99.14 & 99.14 \\
+    CNN + Transformer  & 99.10 & 99.12 & 99.11 & 99.11 \\
+    TransKal           & 99.37 & 99.40 & 99.37 & 99.37 \\
+    \hline
+    \end{tabular}
+    \caption{Combined Results (window length w = 30)}
+    \label{table:multiclass_fault_detection}
+\end{table}
+
+XGBoost performs strongly as a classical baseline model (94.40\% Accuracy), but it does not capture time dependencies or correlations across timesteps, hence is not sequential by nature. To overcome XGBoost’s lack of temporal modeling, we adopted sequential deep-learning models. The LSTM classifier (98.74\% Accuracy) captures temporal dynamics directly, and the subsequent LSTM-FCN model (99.14\% Accuracy) augments this with a convolutional branch that extracts localized temporal motifs and spatial correlations. However, the performance varies according to the window size chosen - smaller window sizes allow for capturing lesser spatial context, resulting in a relatively poor performance. While the CNN+Transformer architecture proved effective (99.11\% Accuracy), it represents one specific type of hybrid architecture. This result prompted us to investigate an alternative hybrid strategy: instead of combining two deep learning feature extractors (CNNs and Transformers), we explored combining a Transformer encoder with a classical state-estimation technique.
+
+Our hypothesis was that a Transformer could serve as a powerful feature extractor, while a Kalman filter, applied as a post-processing step, could explicitly address the common issue of noisy, high-variance predictions often seen in deep learning classifiers. This investigation led to our final proposed model, the TransKal classifier. As this synergistic approach ultimately achieved the best overall performance, the main text will now summarize its final optimized configuration and present a detailed analysis of its performance. The full optimization studies for the other baseline models, as well as the detailed ablation studies for TransKal itself, are provided in the Supporting Information. 
+
+\subsubsection{Specifics for the Best Performing Model - TransKal}
+
+The final TransKal model configuration was determined through a series of systematic optimization and ablation studies. These studies, which are detailed in the Supporting Information, informed our key design choices.
+
+To ensure a fair comparison with the baseline models, the final TransKal model presented in Table \ref{table:multiclass_fault_detection} uses a lookback window of 30 time steps and does not include data augmentation. The model's internal architecture was optimized based on our ablation studies (see SI) to a configuration with a single encoder layer ($dmodel = 32$, $nhead = 2$). Furthermore, the post-processing module was upgraded to an adaptive Kalman filter with base parameters $Q_{base} = 10^{-5}$ and $R_{base} = 0.1$, coupled with a sliding window smoother to handle varying prediction uncertainty. This systematic optimization resulted in the final TransKal model. The model was trained for 15 epochs due to the early stopping criterion. The training dynamics are illustrated in Figure \ref{fig:transkal_training}, with the best validation accuracy of 99.04\% achieved at epoch 2.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/transkal-training-curves.png}
+    \caption[Training Progress of the Final TransKal Model.]{Training Progress of the Final TransKal Model. Left: Training and validation loss curves showing convergence. Right: Training and validation accuracy curves. The model was halted at epoch 15 by the early stopping criterion.}
+    \label{fig:transkal_training}
+\end{figure}
+
+\begin{table}
+    \centering
+    \begin{tabular}{lc}
+    \hline
+    \textbf{Metric} & \textbf{Value} \\
+    \hline
+    Overall Filtered Accuracy           & 99.37\% \\
+    Overall Filtered F1-Score (Macro)   & 99.00\% \\
+    Overall Filtered F1-Score (Weighted)& 99.37\% \\
+    Overall Filtered F1-Score (Micro)   & 99.37\% \\
+    Overall Filtered ROC-AUC (Macro)    & 99.77\% \\
+    Overall Filtered PR-AUC (Macro)     & 99.37\% \\
+    \hline
+    \end{tabular}
+    \caption{Key Performance Indicators of the Final Optimized TransKal Model.}
+    \label{table:transkal_metrics}
+\end{table}
+
+The final performance on the aggregated test set is summarized in Table \ref{table:transkal_metrics}. The TransKal model achieved an Overall Filtered Accuracy of 99.37\% and an Overall Filtered F1-Score (Macro) of 99.00\%. The per-fault diagnostic performance is visualized in the confusion matrices in Figure \ref{fig:transkal_confusion_matrix}. The top matrix shows the raw Transformer predictions, while the bottom matrix displays the results after adaptive Kalman filtering. Both matrices exhibit strong diagonal concentration, representing correct classifications for most fault types. Comparing the two matrices demonstrates the effectiveness of the Kalman filter in reducing scattered misclassifications and improving accuracy for most faults, such as Fault 10 (from 98.17\% to 99.05\%), Fault 13 (from 96.56\% to 98.19\%), and Fault 19 (from 99.93\% to 100\%). The most challenging fault is Fault 12, which is frequently misclassified as Fault 18 (approximately 12\% of cases), likely due to similar process signatures between these two fault types. Additionally, several faults (such as Faults 17, 18, and 20) show a tendency to be misclassified as the normal state (Fault 0).
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.68\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/transkal-confusion-matrix-raw.png}
+        \label{fig:transkal_confusion_matrix_raw}
+    \end{subfigure}
+     
+    \begin{subfigure}[b]{0.68\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/transkal-confusion-matrix-filtered.png}
+        \label{fig:transkal_confusion_matrix_filtered}
+    \end{subfigure}
+    \caption[Normalized Confusion Matrices of the TransKal Model.]{Normalized Confusion Matrices of the TransKal Model comparing raw Transformer predictions (top) and predictions after adaptive Kalman filtering (bottom). The blank areas represent values equal to 0 or less than 0.0001.}
+    \label{fig:transkal_confusion_matrix}
+\end{figure}
+
+A key finding of this study is the demonstrated synergy between a modern deep learning architecture (Transformer) and a classical state estimation technique (Kalman filter). The results show that while the Transformer encoder serves as a powerful feature extractor for capturing complex temporal dependencies, the Kalman filter addresses a common issue of noisy and high-variance predictions from deep learning models. By enforcing temporal smoothness, the filter makes the Transformer a more stable and reliable diagnostic tool, which is crucial for minimizing false alarms and building operator trust in an industrial setting. 
+
+Despite its high overall performance, the model is not without limitations. Its reliance on a fixed-length lookback window, while optimal for most faults, presents challenges in characterizing faults defined by subtle stochastic dynamics rather than deterministic trends, such as the random variation of Fault 12. Within a limited temporal context, the specific statistical signature of this fault is difficult to distinguish from standard operational noise, making it prone to misclassification. Future work could explore multi-scale temporal architectures that can simultaneously analyze short-term patterns for abrupt faults and broader statistical distributions for complex, noise-like fault signatures.
+
+\subsection{Binary Classification of Faults}
+
+As previously noted, there may be unknown faults that can occur, thus it is helpful to have a complementary approach that can label a trajectory as fault-free or faulty. 
+We considered an approach using two kinds of autoencoders that were trained on fault-free data to reconstruct trajectories from past information. If the models are successful in reconstructing a trajectory, it is deemed fault-free, and if not it is faulty.
+
+Autoencoders learn what normal (fault-free) looks like, not from labels, but from the time series trajectories themselves. It may not be enough to simply have memory and ability to identify what is considered normal. The LSTM uses past and present information, enabling them to catch subtle drifts and early faults. Developing further on the LSTM Autoencoder, convolutional autoencoders (CAE) have an edge at capturing the local spatial-temporal correlations more efficiently. Owing to the ability of the CNN filters to detect localized patterns, processing multivariate sensor data is more efficient, leading to faster convergence and better generalization for identifying anomalies. However, CAEs still have limitations; they may struggle with long-term temporal dependencies. They also proved to be sensitive to the window size and data scaling, potentially missing subtle process drifts that evolve slowly over time. Figure \ref{fig:autoencoder-vis} shows examples of successful identification of fault-free and faulty trajectories (on the diagonal), and false positive (lower left) and false negative (upper right) from reconstruction errors.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/autoencoder-vis.png}
+    \caption[Autoencoder visualizations.]{Scenarios illustrating the agreement between original (blue) and reconstructed (orange) signals over time - sequences classified as fault free (left column) show minimal reconstruction error, whereas sequences detected as faulty (right column) exhibit noticeably larger deviations between original and reconstructed signals.}
+    \label{fig:autoencoder-vis}
+\end{figure}
+
+For both autoencoders, each standardized 30×52 window was assigned an anomaly score equal to the mean squared error (MSE) for reconstruction across all time steps and sensors. The fault-free validation set was used to establish a fixed decision threshold at the 99.5th percentile of validation errors, corresponding to a nominal 0.5\% false-alarm rate. During testing, a window was classified as faulty if its MSE exceeded this threshold. Ground-truth labels were assigned using an end-of-window rule, where each window had the fault label of its final time step. Performance was quantified using precision, recall, F1-score, and the confusion matrix for the fault (positive) class. Calibration quality was examined through histograms of validation errors, reconstruction-error timelines, and overlays of original versus reconstructed sequences. The combined results are shown in Table \ref{table:binary-classification-results}. The Convolutional Autoencoder had superior performance across all metrics. This indicates that a binary classifier may be complementary to labeled fault detection.
+
+\begin{table}
+    \centering
+    \begin{tabular}{l P{2.5cm} P{2.5cm} P{2.5cm} P{2cm}}
+    \hline
+    \textbf{Models} & \textbf{F1-Score (weighted) (\%)} & \textbf{Precision (weighted) (\%)} & \textbf{Recall (weighted) (\%)} & \textbf{Accuracy (\%)} \\
+    \hline
+    LSTM Autoencoder            & 97.65 & 97.71 & 97.65 & 97.65 \\
+    Convolutional Autoencoder   & 98.27 & 98.31 & 98.27 & 98.27 \\
+    \hline
+    \end{tabular}
+    \caption[Binary classification results.]{Binary classification results}
+    \label{table:binary-classification-results}
+\end{table}
+
+% \subsubsection{LSTM Autoencoder}
+% Our analysis of the fault-free validation set showed that the per-window reconstruction MSEs were very consistent, clustering tightly together. This stability allowed us to confidently set a fixed detection threshold at the 99.5th percentile, placing it in the far tail to ensure a low false-alarm rate. When we moved to the mixed test set, this threshold worked well: fault-free segments (fault 0) only produced rare, isolated alarms, while windows with actual faults showed clear and sustained error increases. This clean separation resulted in a sensible precision/recall/F1 trade-off overall. As we dug deeper, we noted the model was particularly good at catching abrupt faults (stronger recall) but had slightly less sensitivity to subtle, slow-drifting issues.
+
+% \subsubsection{Convolutional Autoencoder}
+
+% To further support the metrics, qualitative validation was performed by visualizing original and reconstructed sequences across four prediction categories: true normal → predicted normal, true normal → predicted fault, true fault → predicted normal, and true fault → predicted fault. The reconstruction error distributions showed a clear separation between normal and faulty sequences, with faulty runs producing relatively higher errors than fault free operations. ROC and PR curves yielding high AUC values super close to 1, further confirmed the strength of the mode. For a more qualitative or visual evaluation of the model’s performance, overlays of reconstructed versus original signals were plotted. In correctly classified fault free samples, reconstructions nearly overlapped with the input, confirming that the model effectively learned normal process operations. Faulty samples exhibited noticeable deviations between the original signals and the  reconstructed ones, especially near fault regions, which the model translated into significant reconstruction errors. Misclassifications possibly were for borderline cases where some fault patterns were very similar to the normal process dynamics or if there was a slight mismatch at the onset of the normal pattern misclassifying it as a faulty signal. 
+
+
+
+
+
+
+\subsection{Limitations}
+
+The major limitation of this work is that it is being studied for only one particular subset of the data. We made an intentional effort to make the dataset more balanced and well-distributed across normal as well as faulty data for better analysis of the anomalies present. However, different such subsets could favor other models, which is a path yet to be explored. Secondly, the work omits the faults 3, 9, and 15. Fault 3 is associated with cooling water flow in the reactor, which is a step change, while Fault 15 deals with the cooling water flow in the condenser, but is in the form of valve stiction. Fault 9 on the other hand is the outlet temperature for the reactor, and is essentially a random variation. These faults are often misclassified as normal or with each other. According to previous work \cite{shams_fault_2010}, the issue with detecting these faults might be inherent to the Tennessee Eastman Process Dataset itself, as they showed how these faults are too subtle to capture independently and in a short span of time, which is why they are often not considered in machine-learning based anomaly detection studies.
+
+\section{Conclusions}
+
+In this study, we developed a comprehensive benchmark analysis on a curated and balanced TEP dataset. By establishing consistent data splits and metrics, we were able to directly compare a range of architectures, from classical baselines like XGBoost to sequential deep learning models like LSTMs and hybrid architectures incorporating convolutional layers (LSTM-FCN, CNN+Transformer). For the multi-class diagnosis task, our proposed TransKal model achieved state-of-the-art performance (99.37\% accuracy), outperforming all other tested models. We propose that this success stems is not just due to model complexity, but from the synergy between a Transformer encoder (for feature extraction) and a Kalman filter (for smoothing noisy, high-variance predictions). Despite such high accuracies indicating strong anomaly identification, all these models were inadequate in identifying faults 3, 9, and 15, perhaps owing to the inherent tendency of the faults being hard to detect due to the nature of the process itself. For the semi-supervised detection task, both LSTM and Convolutional autoencoders also proved highly effective (over 97.65\% F1-Score), confirming their viability. This systematic evaluation highlights the key industrial trade-off between the high-accuracy diagnosis of supervised models (which require rare, labeled data) and the practical detection of semi-supervised models (which require only normal data), ultimately providing a clear benchmark to guide the design of robust FDD systems.
+
+Through this work, we hope to have contributed to the fundamental understanding of how to reliably benchmark and develop FDD systems. Continued studies should focus on developing multi-scale temporal architectures to address the key limitation of fixed-length lookback windows, particularly for differentiating complex stochastic faults like Fault 12 from normal process variability. Furthermore, research focused on bridging the gap from simple semi-supervised detection to the more valuable task of full-scale diagnosis can also further advance industrial FDD research.
