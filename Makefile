@@ -9,11 +9,15 @@ DATA_DIR := data
 OUTPUTS_DIR := outputs
 FIGURES_DIR := figures
 
-# Python executable
-PYTHON := python3
+# Virtual environment
+VENV := .venv
+VENV_BIN := $(VENV)/bin
 
-# Jupyter executable
-JUPYTER := jupyter
+# Python executable (use venv if available, fall back to system python)
+PYTHON := $(shell [ -f $(VENV_BIN)/python ] && echo $(VENV_BIN)/python || echo python3)
+
+# Jupyter executable (use venv if available, fall back to system jupyter)
+JUPYTER := $(shell [ -f $(VENV_BIN)/jupyter ] && echo $(VENV_BIN)/jupyter || echo jupyter)
 
 # Notebook files
 SYSTEM_NB := $(NOTEBOOKS_DIR)/00-system.ipynb
@@ -38,15 +42,62 @@ FAULT_DIST_FIG := $(FIGURES_DIR)/fault_distribution.png
 FEATURE_CORR_FIG := $(FIGURES_DIR)/feature_correlations.png
 FAULT_SIG_FIG := $(FIGURES_DIR)/fault_signatures.png
 
+# Hyperparameter tuning notebooks (10-series)
+HYPERPARAM_XGBOOST_NB := $(NOTEBOOKS_DIR)/10-xgboost-hyperparameter-tuning.ipynb
+HYPERPARAM_LSTM_NB := $(NOTEBOOKS_DIR)/11-lstm-hyperparameter-tuning.ipynb
+HYPERPARAM_LSTMFCN_NB := $(NOTEBOOKS_DIR)/12-lstm-fcn-hyperparameter-tuning.ipynb
+HYPERPARAM_CNNTRANS_NB := $(NOTEBOOKS_DIR)/13-cnn-transformer-hyperparameter-tuning.ipynb
+HYPERPARAM_TRANSKAL_NB := $(NOTEBOOKS_DIR)/14-transkal-hyperparameter-tuning.ipynb
+HYPERPARAM_LSTMAE_NB := $(NOTEBOOKS_DIR)/15-lstm-autoencoder-hyperparameter-tuning.ipynb
+HYPERPARAM_CONVAE_NB := $(NOTEBOOKS_DIR)/16-conv-autoencoder-hyperparameter-tuning.ipynb
+HYPERPARAM_AGGREGATE_NB := $(NOTEBOOKS_DIR)/19-aggregate-hyperparameter-summary.ipynb
+
+# Hyperparameter output artifacts
+HYPERPARAMS_DIR := $(OUTPUTS_DIR)/hyperparams
+OPTUNA_STUDIES_DIR := $(OUTPUTS_DIR)/optuna_studies
+
+# Different output files for QUICK_MODE vs full tuning
+ifeq ($(QUICK_MODE),True)
+    MODE_SUFFIX := _quick
+else
+    MODE_SUFFIX :=
+endif
+
+HYPERPARAM_XGBOOST := $(HYPERPARAMS_DIR)/xgboost_best$(MODE_SUFFIX).json
+HYPERPARAM_LSTM := $(HYPERPARAMS_DIR)/lstm_best$(MODE_SUFFIX).json
+HYPERPARAM_LSTMFCN := $(HYPERPARAMS_DIR)/lstm_fcn_best$(MODE_SUFFIX).json
+HYPERPARAM_CNNTRANS := $(HYPERPARAMS_DIR)/cnn_transformer_best$(MODE_SUFFIX).json
+HYPERPARAM_TRANSKAL := $(HYPERPARAMS_DIR)/transkal_best$(MODE_SUFFIX).json
+HYPERPARAM_LSTMAE := $(HYPERPARAMS_DIR)/lstm_autoencoder_best$(MODE_SUFFIX).json
+HYPERPARAM_CONVAE := $(HYPERPARAMS_DIR)/conv_autoencoder_best$(MODE_SUFFIX).json
+
 ##@ Help
 help: ## Display this help message
 	@awk 'BEGIN {FS = ":.*##"; printf "\\nUsage:\\n  make \\033[36m<target>\\033[0m\\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \\033[36m%-20s\\033[0m %s\\n", $$1, $$2 } /^##@/ { printf "\\n\\033[1m%s\\033[0m\\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 ##@ Setup
-install: ## Install Python dependencies
-	@echo "Installing dependencies..."
-	pip install -q numpy pandas scikit-learn matplotlib seaborn pyreadr tqdm jupyter ipykernel nbformat psutil
-	@echo "✓ Dependencies installed"
+install-uv: ## Install uv package manager
+	@echo "Installing uv..."
+	@curl -LsSf https://astral.sh/uv/install.sh | sh
+	@echo "✓ uv installed"
+	@echo "Run 'source ~/.local/bin/env' to add uv to PATH"
+
+setup-bashrc: ## Configure bashrc to use venv
+	@echo "Configuring bashrc..."
+	@grep -q "Deactivate conda and activate venv" ~/.bashrc || \
+		echo '\n# Deactivate conda and activate venv on login (interactive shells only)\nif [[ $$- == *i* ]]; then\n    # Deactivate conda if active\n    if [ -n "$$CONDA_DEFAULT_ENV" ] && [ "$$CONDA_DEFAULT_ENV" != "base" ]; then\n        conda deactivate 2>/dev/null\n    fi\n\n    # If still in conda base, deactivate it\n    if [ "$$CONDA_DEFAULT_ENV" = "base" ]; then\n        conda deactivate 2>/dev/null\n    fi\n\n    # Activate project venv if it exists and not already active\n    if [ -z "$$VIRTUAL_ENV" ] && [ -f /home/jovyan/work/jkitchin/tep-manuscript/.venv/bin/activate ]; then\n        source /home/jovyan/work/jkitchin/tep-manuscript/.venv/bin/activate\n        # Change to project directory\n        cd /home/jovyan/work/jkitchin/tep-manuscript 2>/dev/null || true\n    fi\nfi' >> ~/.bashrc
+	@echo "✓ bashrc configured"
+
+install: ## Install Python dependencies from pyproject.toml using uv
+	@echo "Installing dependencies with uv from pyproject.toml..."
+	@if ! command -v uv >/dev/null 2>&1; then \
+		echo "Error: uv not found. Run 'make install-uv' first"; \
+		exit 1; \
+	fi
+	@. $(HOME)/.local/bin/env && uv pip install -e .
+	@echo "✓ Dependencies installed from pyproject.toml"
+
+bootstrap: install-uv setup-bashrc install ## Full setup: install uv, configure bashrc, and install dependencies
 
 ##@ Build Targets
 all: 00-series ## Run all notebooks in sequence
@@ -63,7 +114,6 @@ $(SYSTEM_INFO) $(REQUIREMENTS): $(SYSTEM_NB)
 	@mkdir -p $(OUTPUTS_DIR)
 	@$(JUPYTER) nbconvert --to notebook --execute \
 		--output $(SYSTEM_NB) \
-		--ExecutePreprocessor.timeout=600 \
 		$(SYSTEM_NB)
 	@echo "✓ System information documented"
 
@@ -75,7 +125,6 @@ $(MULTICLASS_TRAIN) $(MULTICLASS_VAL) $(MULTICLASS_TEST) $(BINARY_TRAIN) $(BINAR
 	@mkdir -p $(DATA_DIR)
 	@$(JUPYTER) nbconvert --to notebook --execute \
 		--output 01-create-datasets.ipynb \
-		--ExecutePreprocessor.timeout=1800 \
 		$(DATASET_NB)
 	@echo "✓ Datasets created"
 
@@ -86,9 +135,87 @@ $(EDA_SUMMARY) $(FAULT_DIST_FIG) $(FEATURE_CORR_FIG) $(FAULT_SIG_FIG): $(EDA_NB)
 	@mkdir -p $(OUTPUTS_DIR) $(FIGURES_DIR)
 	@$(JUPYTER) nbconvert --to notebook --execute \
 		--output 02-exploratory-data-analysis.ipynb \
-		--ExecutePreprocessor.timeout=600 \
 		$(EDA_NB)
 	@echo "✓ Exploratory data analysis complete"
+
+##@ Hyperparameter Tuning (10-series)
+hyperparams: hyperparam-xgboost hyperparam-lstm hyperparam-lstm-fcn hyperparam-cnn-transformer hyperparam-transkal hyperparam-lstm-ae hyperparam-conv-ae ## Run all hyperparameter tuning notebooks
+	@echo "✓ All hyperparameter tuning complete"
+
+hyperparam-xgboost: $(HYPERPARAM_XGBOOST) ## Tune XGBoost hyperparameters
+
+$(HYPERPARAM_XGBOOST): $(HYPERPARAM_XGBOOST_NB) $(MULTICLASS_TRAIN)
+	@echo "Tuning XGBoost hyperparameters (QUICK_MODE=$(if $(QUICK_MODE),$(QUICK_MODE),False))..."
+	@mkdir -p $(HYPERPARAMS_DIR) $(OPTUNA_STUDIES_DIR)
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--log-level=INFO \
+		$(HYPERPARAM_XGBOOST_NB)
+	@if [ ! -f "$(HYPERPARAM_XGBOOST)" ]; then \
+		echo "Error: Expected output file $(HYPERPARAM_XGBOOST) not created"; \
+		exit 1; \
+	fi
+	@touch $(HYPERPARAM_XGBOOST)
+	@echo "✓ XGBoost hyperparameters optimized"
+
+hyperparam-lstm: $(HYPERPARAM_LSTM) ## Tune LSTM hyperparameters
+
+$(HYPERPARAM_LSTM): $(HYPERPARAM_LSTM_NB) $(MULTICLASS_TRAIN)
+	@echo "Tuning LSTM hyperparameters..."
+	@mkdir -p $(HYPERPARAMS_DIR) $(OPTUNA_STUDIES_DIR)
+	@$(JUPYTER) nbconvert --to notebook --execute \
+		--output 11-lstm-hyperparameter-tuning.ipynb \
+		$(HYPERPARAM_LSTM_NB)
+	@echo "✓ LSTM hyperparameters optimized"
+
+hyperparam-lstm-fcn: $(HYPERPARAM_LSTMFCN) ## Tune LSTM-FCN hyperparameters
+
+$(HYPERPARAM_LSTMFCN): $(HYPERPARAM_LSTMFCN_NB) $(MULTICLASS_TRAIN)
+	@echo "Tuning LSTM-FCN hyperparameters..."
+	@mkdir -p $(HYPERPARAMS_DIR) $(OPTUNA_STUDIES_DIR)
+	@$(JUPYTER) nbconvert --to notebook --execute \
+		--output 12-lstm-fcn-hyperparameter-tuning.ipynb \
+		$(HYPERPARAM_LSTMFCN_NB)
+	@echo "✓ LSTM-FCN hyperparameters optimized"
+
+hyperparam-cnn-transformer: $(HYPERPARAM_CNNTRANS) ## Tune CNN+Transformer hyperparameters
+
+$(HYPERPARAM_CNNTRANS): $(HYPERPARAM_CNNTRANS_NB) $(MULTICLASS_TRAIN)
+	@echo "Tuning CNN+Transformer hyperparameters..."
+	@mkdir -p $(HYPERPARAMS_DIR) $(OPTUNA_STUDIES_DIR)
+	@$(JUPYTER) nbconvert --to notebook --execute \
+		--output 13-cnn-transformer-hyperparameter-tuning.ipynb \
+		$(HYPERPARAM_CNNTRANS_NB)
+	@echo "✓ CNN+Transformer hyperparameters optimized"
+
+hyperparam-transkal: $(HYPERPARAM_TRANSKAL) ## Tune TransKal hyperparameters
+
+$(HYPERPARAM_TRANSKAL): $(HYPERPARAM_TRANSKAL_NB) $(MULTICLASS_TRAIN)
+	@echo "Tuning TransKal hyperparameters..."
+	@mkdir -p $(HYPERPARAMS_DIR) $(OPTUNA_STUDIES_DIR)
+	@$(JUPYTER) nbconvert --to notebook --execute \
+		--output 14-transkal-hyperparameter-tuning.ipynb \
+		$(HYPERPARAM_TRANSKAL_NB)
+	@echo "✓ TransKal hyperparameters optimized"
+
+hyperparam-lstm-ae: $(HYPERPARAM_LSTMAE) ## Tune LSTM Autoencoder hyperparameters
+
+$(HYPERPARAM_LSTMAE): $(HYPERPARAM_LSTMAE_NB) $(BINARY_TRAIN)
+	@echo "Tuning LSTM Autoencoder hyperparameters..."
+	@mkdir -p $(HYPERPARAMS_DIR) $(OPTUNA_STUDIES_DIR)
+	@$(JUPYTER) nbconvert --to notebook --execute \
+		--output 15-lstm-autoencoder-hyperparameter-tuning.ipynb \
+		$(HYPERPARAM_LSTMAE_NB)
+	@echo "✓ LSTM Autoencoder hyperparameters optimized"
+
+hyperparam-conv-ae: $(HYPERPARAM_CONVAE) ## Tune Convolutional Autoencoder hyperparameters
+
+$(HYPERPARAM_CONVAE): $(HYPERPARAM_CONVAE_NB) $(BINARY_TRAIN)
+	@echo "Tuning Convolutional Autoencoder hyperparameters..."
+	@mkdir -p $(HYPERPARAMS_DIR) $(OPTUNA_STUDIES_DIR)
+	@$(JUPYTER) nbconvert --to notebook --execute \
+		--output 16-conv-autoencoder-hyperparameter-tuning.ipynb \
+		$(HYPERPARAM_CONVAE_NB)
+	@echo "✓ Convolutional Autoencoder hyperparameters optimized"
 
 ##@ Utilities
 clean: ## Remove generated outputs (keeps source data)
