@@ -25,12 +25,12 @@ SYSTEM_INFO := $(OUTPUTS_DIR)/system_info.txt
 REQUIREMENTS := $(OUTPUTS_DIR)/requirements.txt
 
 # Data artifacts
-SUPERVISED_TRAIN := $(DATA_DIR)/supervised_train.csv
-SUPERVISED_VAL := $(DATA_DIR)/supervised_val.csv
-SUPERVISED_TEST := $(DATA_DIR)/supervised_test.csv
-SEMISUPERVISED_TRAIN := $(DATA_DIR)/semisupervised_train.csv
-SEMISUPERVISED_VAL := $(DATA_DIR)/semisupervised_val.csv
-SEMISUPERVISED_TEST := $(DATA_DIR)/semisupervised_test.csv
+MULTICLASS_TRAIN := $(DATA_DIR)/multiclass_train.csv
+MULTICLASS_VAL := $(DATA_DIR)/multiclass_val.csv
+MULTICLASS_TEST := $(DATA_DIR)/multiclass_test.csv
+BINARY_TRAIN := $(DATA_DIR)/binary_train.csv
+BINARY_VAL := $(DATA_DIR)/binary_val.csv
+BINARY_TEST := $(DATA_DIR)/binary_test.csv
 
 # EDA artifacts
 EDA_SUMMARY := $(OUTPUTS_DIR)/eda_summary.txt
@@ -67,21 +67,21 @@ $(SYSTEM_INFO) $(REQUIREMENTS): $(SYSTEM_NB)
 		$(SYSTEM_NB)
 	@echo "✓ System information documented"
 
-data: $(SUPERVISED_TRAIN) ## Run 01-create-datasets.ipynb - Create reproducible datasets
+data: $(MULTICLASS_TRAIN) ## Run 01-create-datasets.ipynb - Create reproducible datasets
 
-$(SUPERVISED_TRAIN) $(SUPERVISED_VAL) $(SUPERVISED_TEST) $(SEMISUPERVISED_TRAIN) $(SEMISUPERVISED_VAL) $(SEMISUPERVISED_TEST): $(DATASET_NB)
+$(MULTICLASS_TRAIN) $(MULTICLASS_VAL) $(MULTICLASS_TEST) $(BINARY_TRAIN) $(BINARY_VAL) $(BINARY_TEST): $(DATASET_NB)
 	@echo "Running 01-create-datasets.ipynb..."
 	@echo "This may take several minutes..."
 	@mkdir -p $(DATA_DIR)
 	@$(JUPYTER) nbconvert --to notebook --execute \
-		--output $(DATASET_NB) \
+		--output 01-create-datasets.ipynb \
 		--ExecutePreprocessor.timeout=1800 \
 		$(DATASET_NB)
 	@echo "✓ Datasets created"
 
 eda: $(EDA_SUMMARY) ## Run 02-exploratory-data-analysis.ipynb - Analyze datasets
 
-$(EDA_SUMMARY) $(FAULT_DIST_FIG) $(FEATURE_CORR_FIG) $(FAULT_SIG_FIG): $(EDA_NB) $(SUPERVISED_TRAIN)
+$(EDA_SUMMARY) $(FAULT_DIST_FIG) $(FEATURE_CORR_FIG) $(FAULT_SIG_FIG): $(EDA_NB) $(MULTICLASS_TRAIN)
 	@echo "Running 02-exploratory-data-analysis.ipynb..."
 	@mkdir -p $(OUTPUTS_DIR) $(FIGURES_DIR)
 	@$(JUPYTER) nbconvert --to notebook --execute \
@@ -114,7 +114,7 @@ clean-all: clean clean-data ## Remove all generated files and data
 check: ## Verify all expected outputs exist
 	@echo "Checking for expected outputs..."
 	@missing=0; \
-	for file in $(SYSTEM_INFO) $(REQUIREMENTS) $(SUPERVISED_TRAIN) $(SUPERVISED_VAL) $(SUPERVISED_TEST) $(EDA_SUMMARY); do \
+	for file in $(SYSTEM_INFO) $(REQUIREMENTS) $(MULTICLASS_TRAIN) $(MULTICLASS_VAL) $(MULTICLASS_TEST) $(EDA_SUMMARY); do \
 		if [ -f $$file ]; then \
 			echo "  ✓ $$file"; \
 		else \
@@ -138,12 +138,12 @@ status: ## Show status of generated files
 	@if [ -f $(REQUIREMENTS) ]; then echo "  ✓ requirements.txt"; else echo "  ✗ requirements.txt"; fi
 	@echo ""
 	@echo "Datasets:"
-	@if [ -f $(SUPERVISED_TRAIN) ]; then echo "  ✓ supervised_train.csv"; else echo "  ✗ supervised_train.csv"; fi
-	@if [ -f $(SUPERVISED_VAL) ]; then echo "  ✓ supervised_val.csv"; else echo "  ✗ supervised_val.csv"; fi
-	@if [ -f $(SUPERVISED_TEST) ]; then echo "  ✓ supervised_test.csv"; else echo "  ✗ supervised_test.csv"; fi
-	@if [ -f $(SEMISUPERVISED_TRAIN) ]; then echo "  ✓ semisupervised_train.csv"; else echo "  ✗ semisupervised_train.csv"; fi
-	@if [ -f $(SEMISUPERVISED_VAL) ]; then echo "  ✓ semisupervised_val.csv"; else echo "  ✗ semisupervised_val.csv"; fi
-	@if [ -f $(SEMISUPERVISED_TEST) ]; then echo "  ✓ semisupervised_test.csv"; else echo "  ✗ semisupervised_test.csv"; fi
+	@if [ -f $(MULTICLASS_TRAIN) ]; then echo "  ✓ multiclass_train.csv"; else echo "  ✗ multiclass_train.csv"; fi
+	@if [ -f $(MULTICLASS_VAL) ]; then echo "  ✓ multiclass_val.csv"; else echo "  ✗ multiclass_val.csv"; fi
+	@if [ -f $(MULTICLASS_TEST) ]; then echo "  ✓ multiclass_test.csv"; else echo "  ✗ multiclass_test.csv"; fi
+	@if [ -f $(BINARY_TRAIN) ]; then echo "  ✓ binary_train.csv"; else echo "  ✗ binary_train.csv"; fi
+	@if [ -f $(BINARY_VAL) ]; then echo "  ✓ binary_val.csv"; else echo "  ✗ binary_val.csv"; fi
+	@if [ -f $(BINARY_TEST) ]; then echo "  ✓ binary_test.csv"; else echo "  ✗ binary_test.csv"; fi
 	@echo ""
 	@echo "EDA Outputs:"
 	@if [ -f $(EDA_SUMMARY) ]; then echo "  ✓ eda_summary.txt"; else echo "  ✗ eda_summary.txt"; fi
