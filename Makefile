@@ -85,7 +85,7 @@ $(EDA_SUMMARY) $(FAULT_DIST_FIG) $(FEATURE_CORR_FIG) $(FAULT_SIG_FIG): $(EDA_NB)
 	@echo "Running 02-exploratory-data-analysis.ipynb..."
 	@mkdir -p $(OUTPUTS_DIR) $(FIGURES_DIR)
 	@$(JUPYTER) nbconvert --to notebook --execute \
-		--output $(EDA_NB) \
+		--output 02-exploratory-data-analysis.ipynb \
 		--ExecutePreprocessor.timeout=600 \
 		$(EDA_NB)
 	@echo "✓ Exploratory data analysis complete"
