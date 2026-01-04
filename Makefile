@@ -50,7 +50,7 @@ HYPERPARAM_CNNTRANS_NB := $(NOTEBOOKS_DIR)/13-cnn-transformer-hyperparameter-tun
 HYPERPARAM_TRANSKAL_NB := $(NOTEBOOKS_DIR)/14-transkal-hyperparameter-tuning.ipynb
 HYPERPARAM_LSTMAE_NB := $(NOTEBOOKS_DIR)/15-lstm-autoencoder-hyperparameter-tuning.ipynb
 HYPERPARAM_CONVAE_NB := $(NOTEBOOKS_DIR)/16-conv-autoencoder-hyperparameter-tuning.ipynb
-HYPERPARAM_AGGREGATE_NB := $(NOTEBOOKS_DIR)/19-aggregate-hyperparameter-summary.ipynb
+HYPERPARAM_SUMMARY_NB := $(NOTEBOOKS_DIR)/17-hyperparameter-summary.ipynb
 
 # Hyperparameter output artifacts
 HYPERPARAMS_DIR := $(OUTPUTS_DIR)/hyperparams
@@ -70,6 +70,7 @@ HYPERPARAM_CNNTRANS := $(HYPERPARAMS_DIR)/cnn_transformer_best$(MODE_SUFFIX).jso
 HYPERPARAM_TRANSKAL := $(HYPERPARAMS_DIR)/transkal_best$(MODE_SUFFIX).json
 HYPERPARAM_LSTMAE := $(HYPERPARAMS_DIR)/lstm_autoencoder_best$(MODE_SUFFIX).json
 HYPERPARAM_CONVAE := $(HYPERPARAMS_DIR)/conv_autoencoder_best$(MODE_SUFFIX).json
+HYPERPARAM_SUMMARY := $(HYPERPARAMS_DIR)/summary$(MODE_SUFFIX).csv
 
 ##@ Help
 help: ## Display this help message
@@ -139,7 +140,7 @@ $(EDA_SUMMARY) $(FAULT_DIST_FIG) $(FEATURE_CORR_FIG) $(FAULT_SIG_FIG): $(EDA_NB)
 	@echo "✓ Exploratory data analysis complete"
 
 ##@ Hyperparameter Tuning (10-series)
-hyperparams: hyperparam-xgboost hyperparam-lstm hyperparam-lstm-fcn hyperparam-cnn-transformer hyperparam-transkal hyperparam-lstm-ae hyperparam-conv-ae ## Run all hyperparameter tuning notebooks
+hyperparams: hyperparam-xgboost hyperparam-lstm hyperparam-lstm-fcn hyperparam-cnn-transformer hyperparam-transkal hyperparam-lstm-ae hyperparam-conv-ae hyperparam-summary ## Run all hyperparameter tuning notebooks
 	@echo "✓ All hyperparameter tuning complete"
 
 hyperparam-xgboost: $(HYPERPARAM_XGBOOST) ## Tune XGBoost hyperparameters
@@ -160,62 +161,106 @@ $(HYPERPARAM_XGBOOST): $(HYPERPARAM_XGBOOST_NB) $(MULTICLASS_TRAIN)
 hyperparam-lstm: $(HYPERPARAM_LSTM) ## Tune LSTM hyperparameters
 
 $(HYPERPARAM_LSTM): $(HYPERPARAM_LSTM_NB) $(MULTICLASS_TRAIN)
-	@echo "Tuning LSTM hyperparameters..."
+	@echo "Tuning LSTM hyperparameters (QUICK_MODE=$(if $(QUICK_MODE),$(QUICK_MODE),False))..."
 	@mkdir -p $(HYPERPARAMS_DIR) $(OPTUNA_STUDIES_DIR)
-	@$(JUPYTER) nbconvert --to notebook --execute \
-		--output 11-lstm-hyperparameter-tuning.ipynb \
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--log-level=INFO \
 		$(HYPERPARAM_LSTM_NB)
+	@if [ ! -f "$(HYPERPARAM_LSTM)" ]; then \
+		echo "Error: Expected output file $(HYPERPARAM_LSTM) not created"; \
+		exit 1; \
+	fi
+	@touch $(HYPERPARAM_LSTM)
 	@echo "✓ LSTM hyperparameters optimized"
 
 hyperparam-lstm-fcn: $(HYPERPARAM_LSTMFCN) ## Tune LSTM-FCN hyperparameters
 
 $(HYPERPARAM_LSTMFCN): $(HYPERPARAM_LSTMFCN_NB) $(MULTICLASS_TRAIN)
-	@echo "Tuning LSTM-FCN hyperparameters..."
+	@echo "Tuning LSTM-FCN hyperparameters (QUICK_MODE=$(if $(QUICK_MODE),$(QUICK_MODE),False))..."
 	@mkdir -p $(HYPERPARAMS_DIR) $(OPTUNA_STUDIES_DIR)
-	@$(JUPYTER) nbconvert --to notebook --execute \
-		--output 12-lstm-fcn-hyperparameter-tuning.ipynb \
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--log-level=INFO \
 		$(HYPERPARAM_LSTMFCN_NB)
+	@if [ ! -f "$(HYPERPARAM_LSTMFCN)" ]; then \
+		echo "Error: Expected output file $(HYPERPARAM_LSTMFCN) not created"; \
+		exit 1; \
+	fi
+	@touch $(HYPERPARAM_LSTMFCN)
 	@echo "✓ LSTM-FCN hyperparameters optimized"
 
 hyperparam-cnn-transformer: $(HYPERPARAM_CNNTRANS) ## Tune CNN+Transformer hyperparameters
 
 $(HYPERPARAM_CNNTRANS): $(HYPERPARAM_CNNTRANS_NB) $(MULTICLASS_TRAIN)
-	@echo "Tuning CNN+Transformer hyperparameters..."
+	@echo "Tuning CNN+Transformer hyperparameters (QUICK_MODE=$(if $(QUICK_MODE),$(QUICK_MODE),False))..."
 	@mkdir -p $(HYPERPARAMS_DIR) $(OPTUNA_STUDIES_DIR)
-	@$(JUPYTER) nbconvert --to notebook --execute \
-		--output 13-cnn-transformer-hyperparameter-tuning.ipynb \
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--log-level=INFO \
 		$(HYPERPARAM_CNNTRANS_NB)
+	@if [ ! -f "$(HYPERPARAM_CNNTRANS)" ]; then \
+		echo "Error: Expected output file $(HYPERPARAM_CNNTRANS) not created"; \
+		exit 1; \
+	fi
+	@touch $(HYPERPARAM_CNNTRANS)
 	@echo "✓ CNN+Transformer hyperparameters optimized"
 
 hyperparam-transkal: $(HYPERPARAM_TRANSKAL) ## Tune TransKal hyperparameters
 
 $(HYPERPARAM_TRANSKAL): $(HYPERPARAM_TRANSKAL_NB) $(MULTICLASS_TRAIN)
-	@echo "Tuning TransKal hyperparameters..."
+	@echo "Tuning TransKal hyperparameters (QUICK_MODE=$(if $(QUICK_MODE),$(QUICK_MODE),False))..."
 	@mkdir -p $(HYPERPARAMS_DIR) $(OPTUNA_STUDIES_DIR)
-	@$(JUPYTER) nbconvert --to notebook --execute \
-		--output 14-transkal-hyperparameter-tuning.ipynb \
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--log-level=INFO \
 		$(HYPERPARAM_TRANSKAL_NB)
+	@if [ ! -f "$(HYPERPARAM_TRANSKAL)" ]; then \
+		echo "Error: Expected output file $(HYPERPARAM_TRANSKAL) not created"; \
+		exit 1; \
+	fi
+	@touch $(HYPERPARAM_TRANSKAL)
 	@echo "✓ TransKal hyperparameters optimized"
 
 hyperparam-lstm-ae: $(HYPERPARAM_LSTMAE) ## Tune LSTM Autoencoder hyperparameters
 
 $(HYPERPARAM_LSTMAE): $(HYPERPARAM_LSTMAE_NB) $(BINARY_TRAIN)
-	@echo "Tuning LSTM Autoencoder hyperparameters..."
+	@echo "Tuning LSTM Autoencoder hyperparameters (QUICK_MODE=$(if $(QUICK_MODE),$(QUICK_MODE),False))..."
 	@mkdir -p $(HYPERPARAMS_DIR) $(OPTUNA_STUDIES_DIR)
-	@$(JUPYTER) nbconvert --to notebook --execute \
-		--output 15-lstm-autoencoder-hyperparameter-tuning.ipynb \
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--log-level=INFO \
 		$(HYPERPARAM_LSTMAE_NB)
+	@if [ ! -f "$(HYPERPARAM_LSTMAE)" ]; then \
+		echo "Error: Expected output file $(HYPERPARAM_LSTMAE) not created"; \
+		exit 1; \
+	fi
+	@touch $(HYPERPARAM_LSTMAE)
 	@echo "✓ LSTM Autoencoder hyperparameters optimized"
 
 hyperparam-conv-ae: $(HYPERPARAM_CONVAE) ## Tune Convolutional Autoencoder hyperparameters
 
 $(HYPERPARAM_CONVAE): $(HYPERPARAM_CONVAE_NB) $(BINARY_TRAIN)
-	@echo "Tuning Convolutional Autoencoder hyperparameters..."
+	@echo "Tuning Convolutional Autoencoder hyperparameters (QUICK_MODE=$(if $(QUICK_MODE),$(QUICK_MODE),False))..."
 	@mkdir -p $(HYPERPARAMS_DIR) $(OPTUNA_STUDIES_DIR)
-	@$(JUPYTER) nbconvert --to notebook --execute \
-		--output 16-conv-autoencoder-hyperparameter-tuning.ipynb \
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--log-level=INFO \
 		$(HYPERPARAM_CONVAE_NB)
+	@if [ ! -f "$(HYPERPARAM_CONVAE)" ]; then \
+		echo "Error: Expected output file $(HYPERPARAM_CONVAE) not created"; \
+		exit 1; \
+	fi
+	@touch $(HYPERPARAM_CONVAE)
 	@echo "✓ Convolutional Autoencoder hyperparameters optimized"
+
+hyperparam-summary: $(HYPERPARAM_SUMMARY) ## Summarize all hyperparameter tuning results
+
+$(HYPERPARAM_SUMMARY): $(HYPERPARAM_SUMMARY_NB) $(HYPERPARAM_XGBOOST) $(HYPERPARAM_LSTM) $(HYPERPARAM_LSTMFCN) $(HYPERPARAM_CNNTRANS) $(HYPERPARAM_TRANSKAL) $(HYPERPARAM_LSTMAE) $(HYPERPARAM_CONVAE)
+	@echo "Generating hyperparameter summary..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--log-level=INFO \
+		$(HYPERPARAM_SUMMARY_NB)
+	@if [ ! -f "$(HYPERPARAM_SUMMARY)" ]; then \
+		echo "Error: Expected output file $(HYPERPARAM_SUMMARY) not created"; \
+		exit 1; \
+	fi
+	@touch $(HYPERPARAM_SUMMARY)
+	@echo "✓ Hyperparameter summary generated"
 
 ##@ Utilities
 clean: ## Remove generated outputs (keeps source data)
