@@ -66,3 +66,18 @@ Trial 45/50: F1=0.9868 (best=0.9874)
 Trial 46/50: F1=0.9864 (best=0.9874)
 Trial 47/50: F1=0.9845 (best=0.9874)
 Trial 48/50: F1=0.9878 (best=0.9878)
+Trial 49/50: F1=0.9843 (best=0.9878)
+Trial 50/50: F1=0.9793 (best=0.9878)
+
+============================================================
+✓ Optimization complete!
+Total time: 23823.31s
+
+[Step 6/6] Saving results...
+✓ Saved to ../outputs/hyperparams/lstm_best.json
+
+============================================================
+✓ LSTM Hyperparameter Tuning Complete!
+Runtime: 397m 21s
+Best F1: 0.9878
+============================================================
