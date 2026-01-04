@@ -1,0 +1,41 @@
+
+[Step 1/6] Loading libraries...
+✓ Using device: cuda
+
+[Step 2/6] Loading data...
+✓ Full data - Train: (50000, 57), Val: (25000, 57), Test: (795200, 57)
+✓ Train (normal only): (2500, 57) (5 runs)
+✓ Eval (from test): (72800, 58) (90 runs)
+  - Normal samples: 4800, Fault samples: 68000
+  - Fault rate: 93.41%
+✓ Features: 52
+
+[Step 3/6] Defining LSTM Autoencoder model...
+✓ LSTM Autoencoder model defined
+
+[Step 4/6] Setting up optimization...
+✓ Objective function defined
+
+============================================================
+[Step 5/6] Starting optimization
+============================================================
+
+Running 5 trials...
+Trial 1/5: F1=0.9229 (best=0.9229)
+Trial 2/5: F1=0.9526 (best=0.9526)
+Trial 3/5: F1=0.9640 (best=0.9640)
+Trial 4/5: F1=0.8974 (best=0.9640)
+Trial 5/5: F1=0.9388 (best=0.9640)
+
+============================================================
+✓ Optimization complete!
+Total time: 23.22s
+
+[Step 6/6] Saving results...
+✓ Saved to ../outputs/hyperparams/lstm_autoencoder_best_quick.json
+
+============================================================
+✓ LSTM Autoencoder Hyperparameter Tuning Complete!
+Runtime: 0m 30s
+Best F1: 0.9640
+============================================================

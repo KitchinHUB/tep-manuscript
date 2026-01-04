@@ -1,0 +1,29 @@
+{
+  "model": "TransKal",
+  "task": "multiclass",
+  "best_params": {
+    "sequence_length": 28,
+    "nhead": 4,
+    "d_model": 128,
+    "num_layers": 1,
+    "dropout": 0.10991914865443686,
+    "learning_rate": 0.0016756729867885714,
+    "batch_size": 128,
+    "kalman_Q": 4.6453634866156374e-06,
+    "kalman_R": 0.1362091716254688
+  },
+  "best_f1_weighted": 0.9715801192732161,
+  "num_trials": 5,
+  "run_fraction": 0.01,
+  "quick_mode": true,
+  "max_epochs": 10,
+  "early_stopping_patience": 3,
+  "optimization_time_seconds": 299.7257468700409,
+  "random_seed": 42,
+  "timing": {
+    "start_time": "2026-01-04 00:57:40",
+    "end_time": "2026-01-04 01:02:58",
+    "total_runtime_seconds": 317.4235098361969,
+    "total_runtime_formatted": "5m 17s"
+  }
+}

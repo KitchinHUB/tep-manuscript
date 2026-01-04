@@ -1,0 +1,26 @@
+{
+  "model": "LSTM",
+  "task": "multiclass",
+  "best_params": {
+    "sequence_length": 25,
+    "hidden_size": 64,
+    "num_layers": 3,
+    "dropout": 0.43764015031643755,
+    "learning_rate": 0.0017653199353644497,
+    "batch_size": 32
+  },
+  "best_f1_weighted": 0.9150263232948467,
+  "num_trials": 5,
+  "run_fraction": 0.01,
+  "quick_mode": true,
+  "max_epochs": 10,
+  "early_stopping_patience": 3,
+  "optimization_time_seconds": 225.6248426437378,
+  "random_seed": 42,
+  "timing": {
+    "start_time": "2026-01-04 01:12:56",
+    "end_time": "2026-01-04 01:16:49",
+    "total_runtime_seconds": 232.99862051010132,
+    "total_runtime_formatted": "3m 52s"
+  }
+}

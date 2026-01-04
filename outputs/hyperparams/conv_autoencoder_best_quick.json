@@ -1,0 +1,29 @@
+{
+  "model": "Conv-Autoencoder",
+  "task": "binary",
+  "best_params": {
+    "sequence_length": 29,
+    "conv_filters": 64,
+    "kernel_size": 3,
+    "latent_filters": 256,
+    "use_transformer": false,
+    "dropout": 0.19861305283731143,
+    "learning_rate": 0.0002714383266369124,
+    "batch_size": 64,
+    "threshold_percentile": 93.5145436359184
+  },
+  "best_f1_weighted": 0.9163419217590622,
+  "num_trials": 5,
+  "run_fraction": 0.01,
+  "quick_mode": true,
+  "max_epochs": 10,
+  "early_stopping_patience": 3,
+  "optimization_time_seconds": 31.303343296051025,
+  "random_seed": 42,
+  "timing": {
+    "start_time": "2026-01-04 01:30:26",
+    "end_time": "2026-01-04 01:31:03",
+    "total_runtime_seconds": 37.29403781890869,
+    "total_runtime_formatted": "0m 37s"
+  }
+}

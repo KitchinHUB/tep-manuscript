@@ -1,0 +1,38 @@
+
+[Step 1/6] Loading libraries...
+✓ Using device: cuda
+
+[Step 2/6] Loading data...
+✓ Full data - Train: (864000, 57), Val: (432000, 57)
+✓ Sampled - Train: (43200, 57) (90 runs), Val: (43200, 57) (90 runs)
+✓ Features: 52, Classes: 18
+
+[Step 3/6] Defining TransKal model...
+✓ TransKal model defined
+
+[Step 4/6] Setting up optimization...
+✓ Objective function defined
+
+============================================================
+[Step 5/6] Starting optimization
+============================================================
+
+Running 5 trials...
+Trial 1/5: F1=0.9664 (best=0.9664)
+Trial 2/5: F1=0.8539 (best=0.9664)
+Trial 3/5: F1=0.8413 (best=0.9664)
+Trial 4/5: F1=0.9716 (best=0.9716)
+Trial 5/5: F1=0.9187 (best=0.9716)
+
+============================================================
+✓ Optimization complete!
+Total time: 299.73s
+
+[Step 6/6] Saving results...
+✓ Saved to ../outputs/hyperparams/transkal_best_quick.json
+
+============================================================
+✓ TransKal Hyperparameter Tuning Complete!
+Runtime: 5m 17s
+Best F1: 0.9716
+============================================================

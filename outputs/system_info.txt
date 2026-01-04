@@ -1,0 +1,39 @@
+======================================================================
+SYSTEM INFORMATION
+======================================================================
+timestamp: 2026-01-03T14:26:58.234692
+platform: Linux-6.8.0-87-generic-x86_64-with-glibc2.35
+system: Linux
+node: jkitchin-gpu-f989db7c5-f5qc4
+release: 6.8.0-87-generic
+version: #88-Ubuntu SMP PREEMPT_DYNAMIC Sat Oct 11 09:28:41 UTC 2025
+machine: x86_64
+processor: x86_64
+python_version: 3.11.6 | packaged by conda-forge | (main, Oct  3 2023, 10:40:35) [GCC 12.3.0]
+python_implementation: CPython
+cpu_count_physical: 128
+cpu_count_logical: 128
+cpu_freq: scpufreq(current=1514.4184375000002, min=1500.0, max=2000.0)
+ram_total_gb: 503.69779205322266
+ram_available_gb: 450.66806411743164
+
+======================================================================
+GPU INFORMATION
+======================================================================
+pytorch_cuda_available: PyTorch not installed
+tensorflow_gpu_available: TensorFlow not installed
+
+======================================================================
+KEY PACKAGE VERSIONS
+======================================================================
+numpy               : 1.24.4
+pandas              : 2.1.1
+scikit-learn        : 1.3.1
+matplotlib          : 3.8.0
+seaborn             : 0.13.0
+torch               : Not installed
+tensorflow          : Not installed
+xgboost             : Not installed
+pyreadr             : 0.5.4
+tqdm                : 4.66.1
+jupyter             : Version unavailable

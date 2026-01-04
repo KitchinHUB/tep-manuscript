@@ -1,0 +1,27 @@
+{
+  "model": "XGBoost",
+  "task": "multiclass",
+  "best_params": {
+    "n_estimators": 499,
+    "max_depth": 6,
+    "learning_rate": 0.19577281917580747,
+    "subsample": 0.9669001079522812,
+    "colsample_bytree": 0.8412714911551206,
+    "min_child_weight": 8,
+    "gamma": 0.5635598310188895,
+    "reg_alpha": 0.3293109960325205,
+    "reg_lambda": 0.06309550078956783
+  },
+  "best_f1_weighted": 0.9236054857365369,
+  "num_trials": 50,
+  "run_fraction": 0.5,
+  "quick_mode": false,
+  "optimization_time_seconds": 26863.08808040619,
+  "random_seed": 42,
+  "timing": {
+    "start_time": "2026-01-04 01:22:23",
+    "end_time": "2026-01-04 08:50:16",
+    "total_runtime_seconds": 26873.183856725693,
+    "total_runtime_formatted": "447m 53s"
+  }
+}

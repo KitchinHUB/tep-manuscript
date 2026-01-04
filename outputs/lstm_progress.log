@@ -1,0 +1,60 @@
+
+[Step 1/6] Loading libraries...
+✓ Using device: cuda
+
+[Step 2/6] Loading and preparing data...
+✓ Full data - Train: (864000, 57), Val: (432000, 57)
+✓ Sampled - Train: (432000, 57) (900 runs), Val: (216000, 57) (450 runs)
+✓ Features: 52, Classes: 18
+
+[Step 3/6] Defining LSTM model...
+✓ LSTM model defined
+
+[Step 4/6] Setting up optimization...
+✓ Objective function defined
+
+============================================================
+[Step 5/6] Starting optimization
+============================================================
+
+Running 50 trials...
+Trial 1/50: F1=0.9778 (best=0.9778)
+Trial 2/50: F1=0.9832 (best=0.9832)
+Trial 3/50: F1=0.9771 (best=0.9832)
+Trial 4/50: F1=0.9834 (best=0.9834)
+Trial 5/50: F1=0.9863 (best=0.9863)
+Trial 6/50: F1=0.9829 (best=0.9863)
+Trial 7/50: F1=0.9854 (best=0.9863)
+Trial 8/50: F1=0.9802 (best=0.9863)
+Trial 9/50: F1=0.9782 (best=0.9863)
+Trial 10/50: F1=0.9845 (best=0.9863)
+Trial 11/50: F1=0.9854 (best=0.9863)
+Trial 12/50: F1=0.9859 (best=0.9863)
+Trial 13/50: F1=0.9856 (best=0.9863)
+Trial 14/50: F1=0.9776 (best=0.9863)
+Trial 15/50: F1=0.9819 (best=0.9863)
+Trial 16/50: F1=0.9874 (best=0.9874)
+Trial 17/50: F1=0.9834 (best=0.9874)
+Trial 18/50: F1=0.9844 (best=0.9874)
+Trial 19/50: F1=0.9842 (best=0.9874)
+Trial 20/50: F1=0.9798 (best=0.9874)
+Trial 21/50: F1=0.9855 (best=0.9874)
+Trial 22/50: F1=0.9849 (best=0.9874)
+Trial 23/50: F1=0.9865 (best=0.9874)
+Trial 24/50: F1=0.9854 (best=0.9874)
+Trial 25/50: F1=0.9849 (best=0.9874)
+Trial 26/50: F1=0.9845 (best=0.9874)
+Trial 27/50: F1=0.9855 (best=0.9874)
+Trial 28/50: F1=0.9872 (best=0.9874)
+Trial 29/50: F1=0.9848 (best=0.9874)
+Trial 30/50: F1=0.9754 (best=0.9874)
+Trial 31/50: F1=0.9825 (best=0.9874)
+Trial 32/50: F1=0.9853 (best=0.9874)
+Trial 33/50: F1=0.9848 (best=0.9874)
+Trial 34/50: F1=0.9837 (best=0.9874)
+Trial 35/50: F1=0.9861 (best=0.9874)
+Trial 36/50: F1=0.9852 (best=0.9874)
+Trial 37/50: F1=0.9859 (best=0.9874)
+Trial 38/50: F1=0.9872 (best=0.9874)
+Trial 39/50: F1=0.9842 (best=0.9874)
+Trial 40/50: F1=0.9837 (best=0.9874)

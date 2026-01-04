@@ -1,0 +1,38 @@
+
+[Step 1/6] Loading libraries...
+✓ Using device: cuda
+
+[Step 2/6] Loading data...
+✓ Full data - Train: (864000, 57), Val: (432000, 57)
+✓ Sampled - Train: (43200, 57) (90 runs), Val: (43200, 57) (90 runs)
+✓ Features: 52, Classes: 18
+
+[Step 3/6] Defining LSTM-FCN model...
+✓ LSTM-FCN model defined
+
+[Step 4/6] Setting up optimization...
+✓ Objective function defined
+
+============================================================
+[Step 5/6] Starting optimization
+============================================================
+
+Running 5 trials...
+Trial 1/5: F1=0.8780 (best=0.8780)
+Trial 2/5: F1=0.9146 (best=0.9146)
+Trial 3/5: F1=0.9130 (best=0.9146)
+Trial 4/5: F1=0.8920 (best=0.9146)
+Trial 5/5: F1=0.9060 (best=0.9146)
+
+============================================================
+✓ Optimization complete!
+Total time: 172.71s
+
+[Step 6/6] Saving results...
+✓ Saved to ../outputs/hyperparams/lstm_fcn_best_quick.json
+
+============================================================
+✓ LSTM-FCN Hyperparameter Tuning Complete!
+Runtime: 3m 0s
+Best F1: 0.9146
+============================================================

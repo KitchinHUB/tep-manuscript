@@ -1,0 +1,30 @@
+{
+  "model": "CNN-Transformer",
+  "task": "multiclass",
+  "best_params": {
+    "sequence_length": 39,
+    "conv_filters": 32,
+    "kernel_size": 3,
+    "nhead": 4,
+    "d_model": 32,
+    "num_encoder_layers": 3,
+    "dim_feedforward": 256,
+    "dropout": 0.2906044195564347,
+    "learning_rate": 0.0006107500184056983,
+    "batch_size": 64
+  },
+  "best_f1_weighted": 0.9490790799560074,
+  "num_trials": 5,
+  "run_fraction": 0.01,
+  "quick_mode": true,
+  "max_epochs": 10,
+  "early_stopping_patience": 3,
+  "optimization_time_seconds": 344.71721148490906,
+  "random_seed": 42,
+  "timing": {
+    "start_time": "2026-01-04 01:20:00",
+    "end_time": "2026-01-04 01:25:53",
+    "total_runtime_seconds": 352.68912959098816,
+    "total_runtime_formatted": "5m 52s"
+  }
+}

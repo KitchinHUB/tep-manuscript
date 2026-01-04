@@ -46,7 +46,6 @@ ipython_config.py
 .vscode/
 
 # Data files (large)
-*.csv
 *.h5
 *.hdf5
 *.pkl
@@ -56,6 +55,10 @@ ipython_config.py
 *.zip
 *.RData
 *.Rdata
+
+# Dataset directories (large raw data)
+Dataset/
+data/
 
 # Model checkpoints (large)
 *.pth
@@ -79,16 +82,17 @@ Thumbs.db
 *~
 
 # Output directories
-outputs/
 results/
 figures/
 plots/
 
 # But keep data directories structure
 !data/.gitkeep
-!outputs/.gitkeep
 !figures/.gitkeep
 
 # Exception: Keep small example data or manifests
 !data/README.md
-!outputs/README.md
+
+# Outputs - track everything (all files are small)
+!outputs/**/*.pkl
+!outputs/**/*.log

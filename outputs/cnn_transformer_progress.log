@@ -1,0 +1,38 @@
+
+[Step 1/6] Loading libraries...
+✓ Using device: cuda
+
+[Step 2/6] Loading data...
+✓ Full data - Train: (864000, 57), Val: (432000, 57)
+✓ Sampled - Train: (43200, 57) (90 runs), Val: (43200, 57) (90 runs)
+✓ Features: 52, Classes: 18
+
+[Step 3/6] Defining CNN-Transformer model...
+✓ CNN-Transformer model defined
+
+[Step 4/6] Setting up optimization...
+✓ Objective function defined
+
+============================================================
+[Step 5/6] Starting optimization
+============================================================
+
+Running 5 trials...
+Trial 1/5: F1=0.9007 (best=0.9007)
+Trial 2/5: F1=0.8844 (best=0.9007)
+Trial 3/5: F1=0.9491 (best=0.9491)
+Trial 4/5: F1=0.9481 (best=0.9491)
+Trial 5/5: F1=0.9432 (best=0.9491)
+
+============================================================
+✓ Optimization complete!
+Total time: 344.72s
+
+[Step 6/6] Saving results...
+✓ Saved to ../outputs/hyperparams/cnn_transformer_best_quick.json
+
+============================================================
+✓ CNN-Transformer Hyperparameter Tuning Complete!
+Runtime: 5m 52s
+Best F1: 0.9491
+============================================================

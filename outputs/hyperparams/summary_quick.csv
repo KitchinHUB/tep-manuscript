@@ -1,0 +1,8 @@
+Model,Task,Best F1 (weighted),Trials,Run Fraction,Max Epochs,Optimization Time,Total Runtime
+TransKal,multiclass,0.9715801192732161,5,1%,10,299.7s,5m 17s
+LSTM-Autoencoder,binary,0.9640103246577745,5,1%,10,23.2s,0m 30s
+CNN-Transformer,multiclass,0.9490790799560074,5,1%,10,344.7s,5m 52s
+Conv-Autoencoder,binary,0.9163419217590622,5,1%,10,31.3s,0m 37s
+LSTM,multiclass,0.9150263232948467,5,1%,10,225.6s,3m 52s
+LSTM-FCN,multiclass,0.9145699648763306,5,1%,10,172.7s,3m 0s
+XGBoost,multiclass,0.870658586465231,5,1%,N/A,232.3s,3m 59s

@@ -1,0 +1,26 @@
+{
+  "model": "LSTM-FCN",
+  "task": "multiclass",
+  "best_params": {
+    "sequence_length": 37,
+    "lstm_hidden": 64,
+    "lstm_layers": 1,
+    "dropout": 0.49019554938930066,
+    "learning_rate": 0.0027969108473455905,
+    "batch_size": 64
+  },
+  "best_f1_weighted": 0.9145699648763306,
+  "num_trials": 5,
+  "run_fraction": 0.01,
+  "quick_mode": true,
+  "max_epochs": 10,
+  "early_stopping_patience": 3,
+  "optimization_time_seconds": 172.71247363090515,
+  "random_seed": 42,
+  "timing": {
+    "start_time": "2026-01-04 01:16:54",
+    "end_time": "2026-01-04 01:19:54",
+    "total_runtime_seconds": 180.03516960144043,
+    "total_runtime_formatted": "3m 0s"
+  }
+}
