@@ -1,4 +1,4 @@
-.PHONY: help clean all 00-series data eda system install
+.PHONY: help clean all 00-series data eda system install new-tep-data detector-trajectory new-eval
 
 # Default target
 .DEFAULT_GOAL := help
@@ -23,6 +23,8 @@ JUPYTER := $(shell [ -f $(VENV_BIN)/jupyter ] && echo $(VENV_BIN)/jupyter || ech
 SYSTEM_NB := $(NOTEBOOKS_DIR)/00-system.ipynb
 DATASET_NB := $(NOTEBOOKS_DIR)/01-create-datasets.ipynb
 EDA_NB := $(NOTEBOOKS_DIR)/02-exploratory-data-analysis.ipynb
+NEW_TEP_DATA_NB := $(NOTEBOOKS_DIR)/03-generate-new-tep-dataset.ipynb
+DETECTOR_TRAJ_NB := $(NOTEBOOKS_DIR)/04-generate-detector-trajectory.ipynb
 
 # Output artifacts
 SYSTEM_INFO := $(OUTPUTS_DIR)/system_info.txt
@@ -35,6 +37,20 @@ MULTICLASS_TEST := $(DATA_DIR)/multiclass_test.csv
 BINARY_TRAIN := $(DATA_DIR)/binary_train.csv
 BINARY_VAL := $(DATA_DIR)/binary_val.csv
 BINARY_TEST := $(DATA_DIR)/binary_test.csv
+
+# QUICK_MODE suffix - must be defined before variables that use it
+ifeq ($(QUICK_MODE),True)
+    MODE_SUFFIX := _quick
+else
+    MODE_SUFFIX :=
+endif
+
+# New TEP data artifacts (from tep-sim)
+NEW_MULTICLASS_EVAL := $(DATA_DIR)/new_multiclass_eval$(MODE_SUFFIX).csv
+NEW_BINARY_EVAL := $(DATA_DIR)/new_binary_eval$(MODE_SUFFIX).csv
+
+# Detector trajectory artifacts
+DETECTOR_TRAJECTORY := $(DATA_DIR)/detector_trajectory$(MODE_SUFFIX).csv
 
 # EDA artifacts
 EDA_SUMMARY := $(OUTPUTS_DIR)/eda_summary.txt
@@ -55,13 +71,6 @@ HYPERPARAM_SUMMARY_NB := $(NOTEBOOKS_DIR)/17-hyperparameter-summary.ipynb
 # Hyperparameter output artifacts
 HYPERPARAMS_DIR := $(OUTPUTS_DIR)/hyperparams
 OPTUNA_STUDIES_DIR := $(OUTPUTS_DIR)/optuna_studies
-
-# Different output files for QUICK_MODE vs full tuning
-ifeq ($(QUICK_MODE),True)
-    MODE_SUFFIX := _quick
-else
-    MODE_SUFFIX :=
-endif
 
 HYPERPARAM_XGBOOST := $(HYPERPARAMS_DIR)/xgboost_best$(MODE_SUFFIX).json
 HYPERPARAM_LSTM := $(HYPERPARAMS_DIR)/lstm_best$(MODE_SUFFIX).json
@@ -138,6 +147,184 @@ $(EDA_SUMMARY) $(FAULT_DIST_FIG) $(FEATURE_CORR_FIG) $(FAULT_SIG_FIG): $(EDA_NB)
 		--output 02-exploratory-data-analysis.ipynb \
 		$(EDA_NB)
 	@echo "✓ Exploratory data analysis complete"
+
+new-tep-data: $(NEW_MULTICLASS_EVAL) ## Run 03-generate-new-tep-dataset.ipynb - Generate new TEP evaluation data
+
+$(NEW_MULTICLASS_EVAL) $(NEW_BINARY_EVAL): $(NEW_TEP_DATA_NB)
+	@echo "Running 03-generate-new-tep-dataset.ipynb (QUICK_MODE=$(if $(QUICK_MODE),$(QUICK_MODE),False))..."
+	@if [ "$(QUICK_MODE)" = "True" ]; then \
+		echo "⚡ Quick mode: generating minimal test dataset (~1 min)"; \
+	else \
+		echo "Full mode: generating complete evaluation dataset (~4 hrs)"; \
+	fi
+	@mkdir -p $(DATA_DIR)
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 \
+		--log-level=INFO \
+		$(NEW_TEP_DATA_NB)
+	@if [ ! -f "$(NEW_MULTICLASS_EVAL)" ]; then \
+		echo "Error: Expected output file $(NEW_MULTICLASS_EVAL) not created"; \
+		exit 1; \
+	fi
+	@echo "✓ New TEP evaluation datasets generated"
+
+detector-trajectory: $(DETECTOR_TRAJECTORY) ## Run 04-generate-detector-trajectory.ipynb - Generate detector evaluation trajectory
+
+$(DETECTOR_TRAJECTORY): $(DETECTOR_TRAJ_NB)
+	@echo "Running 04-generate-detector-trajectory.ipynb (QUICK_MODE=$(if $(QUICK_MODE),$(QUICK_MODE),False))..."
+	@if [ "$(QUICK_MODE)" = "True" ]; then \
+		echo "⚡ Quick mode: generating short trajectory (~1 min)"; \
+	else \
+		echo "Full mode: generating 42-hour trajectory (~2 min)"; \
+	fi
+	@mkdir -p $(DATA_DIR)
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 \
+		--log-level=INFO \
+		$(DETECTOR_TRAJ_NB)
+	@if [ ! -f "$(DETECTOR_TRAJECTORY)" ]; then \
+		echo "Error: Expected output file $(DETECTOR_TRAJECTORY) not created"; \
+		exit 1; \
+	fi
+	@echo "✓ Detector trajectory generated"
+
+##@ New Data Evaluation (30-series)
+.PHONY: new-eval new-eval-xgboost new-eval-lstm new-eval-lstm-fcn new-eval-cnn-transformer new-eval-transkal new-eval-lstm-ae new-eval-conv-ae new-eval-summary
+
+new-eval: new-eval-xgboost new-eval-lstm new-eval-lstm-fcn new-eval-cnn-transformer new-eval-transkal new-eval-lstm-ae new-eval-conv-ae new-eval-summary ## Run all 30-series new data evaluation notebooks
+	@echo "✓ All new data evaluations complete"
+
+new-eval-xgboost: ## Run 30-xgboost-new-data-evaluation.ipynb
+	@if [ ! -f "$(NEW_MULTICLASS_EVAL)" ]; then \
+		echo "Error: $(NEW_MULTICLASS_EVAL) not found. Run 'make new-tep-data QUICK_MODE=$(QUICK_MODE)' first."; \
+		exit 1; \
+	fi
+	@echo "Running XGBoost new data evaluation..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/30-xgboost-new-data-evaluation.ipynb
+	@echo "✓ XGBoost new data evaluation complete"
+
+new-eval-lstm: ## Run 31-lstm-new-data-evaluation.ipynb
+	@if [ ! -f "$(NEW_MULTICLASS_EVAL)" ]; then \
+		echo "Error: $(NEW_MULTICLASS_EVAL) not found. Run 'make new-tep-data QUICK_MODE=$(QUICK_MODE)' first."; \
+		exit 1; \
+	fi
+	@echo "Running LSTM new data evaluation..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/31-lstm-new-data-evaluation.ipynb
+	@echo "✓ LSTM new data evaluation complete"
+
+new-eval-lstm-fcn: ## Run 32-lstm-fcn-new-data-evaluation.ipynb
+	@if [ ! -f "$(NEW_MULTICLASS_EVAL)" ]; then \
+		echo "Error: $(NEW_MULTICLASS_EVAL) not found. Run 'make new-tep-data QUICK_MODE=$(QUICK_MODE)' first."; \
+		exit 1; \
+	fi
+	@echo "Running LSTM-FCN new data evaluation..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/32-lstm-fcn-new-data-evaluation.ipynb
+	@echo "✓ LSTM-FCN new data evaluation complete"
+
+new-eval-cnn-transformer: ## Run 33-cnn-transformer-new-data-evaluation.ipynb
+	@if [ ! -f "$(NEW_MULTICLASS_EVAL)" ]; then \
+		echo "Error: $(NEW_MULTICLASS_EVAL) not found. Run 'make new-tep-data QUICK_MODE=$(QUICK_MODE)' first."; \
+		exit 1; \
+	fi
+	@echo "Running CNN-Transformer new data evaluation..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/33-cnn-transformer-new-data-evaluation.ipynb
+	@echo "✓ CNN-Transformer new data evaluation complete"
+
+new-eval-transkal: ## Run 34-transkal-new-data-evaluation.ipynb
+	@if [ ! -f "$(NEW_MULTICLASS_EVAL)" ]; then \
+		echo "Error: $(NEW_MULTICLASS_EVAL) not found. Run 'make new-tep-data QUICK_MODE=$(QUICK_MODE)' first."; \
+		exit 1; \
+	fi
+	@echo "Running TransKal new data evaluation..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/34-transkal-new-data-evaluation.ipynb
+	@echo "✓ TransKal new data evaluation complete"
+
+new-eval-lstm-ae: ## Run 35-lstm-autoencoder-new-data-evaluation.ipynb
+	@if [ ! -f "$(NEW_BINARY_EVAL)" ]; then \
+		echo "Error: $(NEW_BINARY_EVAL) not found. Run 'make new-tep-data QUICK_MODE=$(QUICK_MODE)' first."; \
+		exit 1; \
+	fi
+	@echo "Running LSTM-Autoencoder new data evaluation..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/35-lstm-autoencoder-new-data-evaluation.ipynb
+	@echo "✓ LSTM-Autoencoder new data evaluation complete"
+
+new-eval-conv-ae: ## Run 36-conv-autoencoder-new-data-evaluation.ipynb
+	@if [ ! -f "$(NEW_BINARY_EVAL)" ]; then \
+		echo "Error: $(NEW_BINARY_EVAL) not found. Run 'make new-tep-data QUICK_MODE=$(QUICK_MODE)' first."; \
+		exit 1; \
+	fi
+	@echo "Running Conv-Autoencoder new data evaluation..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/36-conv-autoencoder-new-data-evaluation.ipynb
+	@echo "✓ Conv-Autoencoder new data evaluation complete"
+
+new-eval-summary: ## Run 37-model-comparison-new-data.ipynb
+	@echo "Running new data model comparison summary..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/37-model-comparison-new-data.ipynb
+	@echo "✓ New data model comparison summary complete"
+
+##@ HMM Filters (40-series)
+.PHONY: hmm-filters hmm-xgboost hmm-lstm hmm-lstm-fcn hmm-cnn-transformer hmm-transkal hmm-summary
+
+hmm-filters: hmm-xgboost hmm-lstm hmm-lstm-fcn hmm-cnn-transformer hmm-transkal hmm-summary ## Run all 40-series HMM filter notebooks
+	@echo "✓ All HMM filter evaluations complete"
+
+hmm-xgboost: ## Run 40-xgboost-hmm-filter.ipynb
+	@echo "Running XGBoost HMM filter evaluation..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/40-xgboost-hmm-filter.ipynb
+	@echo "✓ XGBoost HMM filter complete"
+
+hmm-lstm: ## Run 41-lstm-hmm-filter.ipynb
+	@echo "Running LSTM HMM filter evaluation..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/41-lstm-hmm-filter.ipynb
+	@echo "✓ LSTM HMM filter complete"
+
+hmm-lstm-fcn: ## Run 42-lstm-fcn-hmm-filter.ipynb
+	@echo "Running LSTM-FCN HMM filter evaluation..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/42-lstm-fcn-hmm-filter.ipynb
+	@echo "✓ LSTM-FCN HMM filter complete"
+
+hmm-cnn-transformer: ## Run 43-cnn-transformer-hmm-filter.ipynb
+	@echo "Running CNN-Transformer HMM filter evaluation..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/43-cnn-transformer-hmm-filter.ipynb
+	@echo "✓ CNN-Transformer HMM filter complete"
+
+hmm-transkal: ## Run 44-transkal-hmm-filter.ipynb
+	@echo "Running TransKal HMM filter evaluation..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/44-transkal-hmm-filter.ipynb
+	@echo "✓ TransKal HMM filter complete"
+
+hmm-summary: ## Run 47-hmm-filter-comparison-summary.ipynb
+	@echo "Running HMM filter comparison summary..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/47-hmm-filter-comparison-summary.ipynb
+	@echo "✓ HMM filter comparison summary complete"
 
 ##@ Hyperparameter Tuning (10-series)
 hyperparams: hyperparam-xgboost hyperparam-lstm hyperparam-lstm-fcn hyperparam-cnn-transformer hyperparam-transkal hyperparam-lstm-ae hyperparam-conv-ae hyperparam-summary ## Run all hyperparameter tuning notebooks
@@ -381,6 +568,96 @@ $(FINAL_COMPARISON): $(FINAL_COMPARISON_NB) $(FINAL_XGBOOST_MODEL) $(FINAL_LSTM_
 		$(FINAL_COMPARISON_NB)
 	@touch $@
 	@echo "✓ Model comparison summary generated"
+
+##@ Pluggable Detectors (50-series)
+.PHONY: detectors detector-xgboost detector-lstm detector-lstm-fcn detector-cnn-transformer detector-transkal detector-lstm-ae detector-conv-ae detector-summary
+
+detectors: detector-xgboost detector-lstm detector-lstm-fcn detector-cnn-transformer detector-transkal detector-lstm-ae detector-conv-ae detector-summary ## Run all 50-series detector notebooks
+	@echo "✓ All detector evaluations complete"
+
+detector-xgboost: ## Run 50-xgboost-pluggable-detector.ipynb
+	@if [ ! -f "$(DETECTOR_TRAJECTORY)" ]; then \
+		echo "Error: $(DETECTOR_TRAJECTORY) not found. Run 'make detector-trajectory QUICK_MODE=$(QUICK_MODE)' first."; \
+		exit 1; \
+	fi
+	@echo "Running XGBoost detector evaluation..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/50-xgboost-pluggable-detector.ipynb
+	@echo "✓ XGBoost detector complete"
+
+detector-lstm: ## Run 51-lstm-pluggable-detector.ipynb
+	@if [ ! -f "$(DETECTOR_TRAJECTORY)" ]; then \
+		echo "Error: $(DETECTOR_TRAJECTORY) not found. Run 'make detector-trajectory QUICK_MODE=$(QUICK_MODE)' first."; \
+		exit 1; \
+	fi
+	@echo "Running LSTM detector evaluation..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/51-lstm-pluggable-detector.ipynb
+	@echo "✓ LSTM detector complete"
+
+detector-lstm-fcn: ## Run 52-lstm-fcn-pluggable-detector.ipynb
+	@if [ ! -f "$(DETECTOR_TRAJECTORY)" ]; then \
+		echo "Error: $(DETECTOR_TRAJECTORY) not found. Run 'make detector-trajectory QUICK_MODE=$(QUICK_MODE)' first."; \
+		exit 1; \
+	fi
+	@echo "Running LSTM-FCN detector evaluation..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/52-lstm-fcn-pluggable-detector.ipynb
+	@echo "✓ LSTM-FCN detector complete"
+
+detector-cnn-transformer: ## Run 53-cnn-transformer-pluggable-detector.ipynb
+	@if [ ! -f "$(DETECTOR_TRAJECTORY)" ]; then \
+		echo "Error: $(DETECTOR_TRAJECTORY) not found. Run 'make detector-trajectory QUICK_MODE=$(QUICK_MODE)' first."; \
+		exit 1; \
+	fi
+	@echo "Running CNN-Transformer detector evaluation..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/53-cnn-transformer-pluggable-detector.ipynb
+	@echo "✓ CNN-Transformer detector complete"
+
+detector-transkal: ## Run 54-transkal-pluggable-detector.ipynb
+	@if [ ! -f "$(DETECTOR_TRAJECTORY)" ]; then \
+		echo "Error: $(DETECTOR_TRAJECTORY) not found. Run 'make detector-trajectory QUICK_MODE=$(QUICK_MODE)' first."; \
+		exit 1; \
+	fi
+	@echo "Running TransKal detector evaluation..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/54-transkal-pluggable-detector.ipynb
+	@echo "✓ TransKal detector complete"
+
+detector-lstm-ae: ## Run 55-lstm-autoencoder-pluggable-detector.ipynb
+	@if [ ! -f "$(DETECTOR_TRAJECTORY)" ]; then \
+		echo "Error: $(DETECTOR_TRAJECTORY) not found. Run 'make detector-trajectory QUICK_MODE=$(QUICK_MODE)' first."; \
+		exit 1; \
+	fi
+	@echo "Running LSTM-Autoencoder detector evaluation..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/55-lstm-autoencoder-pluggable-detector.ipynb
+	@echo "✓ LSTM-Autoencoder detector complete"
+
+detector-conv-ae: ## Run 56-conv-autoencoder-pluggable-detector.ipynb
+	@if [ ! -f "$(DETECTOR_TRAJECTORY)" ]; then \
+		echo "Error: $(DETECTOR_TRAJECTORY) not found. Run 'make detector-trajectory QUICK_MODE=$(QUICK_MODE)' first."; \
+		exit 1; \
+	fi
+	@echo "Running Conv-Autoencoder detector evaluation..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/56-conv-autoencoder-pluggable-detector.ipynb
+	@echo "✓ Conv-Autoencoder detector complete"
+
+detector-summary: ## Run 57-detector-comparison-summary.ipynb
+	@echo "Running detector comparison summary..."
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/57-detector-comparison-summary.ipynb
+	@echo "✓ Detector comparison summary complete"
 
 ##@ Utilities
 clean: ## Remove generated outputs (keeps source data)
