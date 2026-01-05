@@ -1,0 +1,28 @@
+{
+  "model": "LSTM-Autoencoder",
+  "task": "binary",
+  "best_params": {
+    "sequence_length": 38,
+    "hidden_size": 64,
+    "num_layers": 1,
+    "latent_size": 32,
+    "dropout": 0.07330677630698543,
+    "learning_rate": 0.0003199821382944991,
+    "batch_size": 32,
+    "threshold_percentile": 97.94631693879482
+  },
+  "best_f1_weighted": 0.981739927432699,
+  "num_trials": 50,
+  "run_fraction": 0.5,
+  "quick_mode": false,
+  "max_epochs": 50,
+  "early_stopping_patience": 5,
+  "optimization_time_seconds": 9221.73217201233,
+  "random_seed": 42,
+  "timing": {
+    "start_time": "2026-01-04 16:15:31",
+    "end_time": "2026-01-04 18:49:19",
+    "total_runtime_seconds": 9227.936001062393,
+    "total_runtime_formatted": "153m 47s"
+  }
+}
