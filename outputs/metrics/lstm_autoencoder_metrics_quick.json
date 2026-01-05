@@ -1,0 +1,47 @@
+{
+  "model": "LSTM-Autoencoder",
+  "task": "binary",
+  "quick_mode": true,
+  "train_fraction": 0.01,
+  "train_samples": 463,
+  "val_samples": 463,
+  "test_samples": 759310,
+  "best_epoch": 1,
+  "best_val_loss": 1.284020968278249,
+  "accuracy": 0.8990056762060291,
+  "balanced_accuracy": 0.7408024671894263,
+  "f1_weighted": 0.8921804012060963,
+  "f1_binary": 0.9422245862314211,
+  "precision": 0.9212551674961179,
+  "recall": 0.9641708426489862,
+  "roc_auc": 0.9419919881139411,
+  "pr_auc": 0.9900309081484703,
+  "threshold": 1.2349965572357178,
+  "threshold_percentile": 97.94631693879482,
+  "per_class_metrics": {
+    "Normal": {
+      "precision": 0.7115136316233799,
+      "recall": 0.5174340917298664,
+      "f1": 0.5991490162460534
+    },
+    "Fault": {
+      "precision": 0.9212551674961179,
+      "recall": 0.9641708426489862,
+      "f1": 0.9422245862314211
+    }
+  },
+  "hyperparameters": {
+    "sequence_length": 38,
+    "hidden_size": 64,
+    "num_layers": 1,
+    "latent_size": 32,
+    "dropout": 0.07330677630698543,
+    "learning_rate": 0.0003199821382944991,
+    "batch_size": 32,
+    "threshold_percentile": 97.94631693879482
+  },
+  "epochs_trained": 1,
+  "training_time_seconds": 1.85923171043396,
+  "total_runtime_seconds": 55.99157929420471,
+  "random_seed": 42
+}

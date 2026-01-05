@@ -1,0 +1,48 @@
+{
+  "model": "Conv-Autoencoder",
+  "task": "binary",
+  "quick_mode": true,
+  "train_fraction": 0.01,
+  "train_samples": 461,
+  "val_samples": 461,
+  "test_samples": 757370,
+  "best_epoch": 1,
+  "best_val_loss": 1.0109082013368607,
+  "accuracy": 0.905817500033009,
+  "balanced_accuracy": 0.7113236028487507,
+  "f1_weighted": 0.8927554370536674,
+  "f1_binary": 0.947040100617201,
+  "precision": 0.911063272369889,
+  "recall": 0.9859751101491845,
+  "roc_auc": 0.961893944997404,
+  "pr_auc": 0.9935799196415365,
+  "threshold": 0.9768514037132263,
+  "threshold_percentile": 98.65427130589171,
+  "per_class_metrics": {
+    "Normal": {
+      "precision": 0.8417665218983831,
+      "recall": 0.43667209554831704,
+      "f1": 0.5750388732998517
+    },
+    "Fault": {
+      "precision": 0.911063272369889,
+      "recall": 0.9859751101491845,
+      "f1": 0.947040100617201
+    }
+  },
+  "hyperparameters": {
+    "sequence_length": 40,
+    "conv_filters": 64,
+    "kernel_size": 3,
+    "latent_filters": 128,
+    "use_transformer": false,
+    "dropout": 0.11928321723176455,
+    "learning_rate": 0.00853432554832179,
+    "batch_size": 128,
+    "threshold_percentile": 98.65427130589171
+  },
+  "epochs_trained": 1,
+  "training_time_seconds": 1.98822021484375,
+  "total_runtime_seconds": 27.758086681365967,
+  "random_seed": 42
+}

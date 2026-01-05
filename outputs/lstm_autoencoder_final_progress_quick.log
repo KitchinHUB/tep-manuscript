@@ -1,0 +1,41 @@
+[2026-01-05 14:18:22] ============================================================
+[2026-01-05 14:18:22] LSTM Autoencoder Final Training and Evaluation
+[2026-01-05 14:18:22] ============================================================
+[2026-01-05 14:18:22] 🚀 QUICK MODE (1% data, 1 epoch)
+[2026-01-05 14:18:22] Using FULL mode hyperparameters
+[2026-01-05 14:18:22] Hyperparameters: {'sequence_length': 38, 'hidden_size': 64, 'num_layers': 1, 'latent_size': 32, 'dropout': 0.07330677630698543, 'learning_rate': 0.0003199821382944991, 'batch_size': 32, 'threshold_percentile': 97.94631693879482}
+[2026-01-05 14:18:22] ============================================================
+[2026-01-05 14:18:25] ✓ Using device: cuda
+[2026-01-05 14:18:28] ✓ Train (normal only): (50000, 57)
+[2026-01-05 14:18:28] ✓ Val (normal only): (25000, 57)
+[2026-01-05 14:18:28] ✓ Test (mixed): (795200, 57)
+[2026-01-05 14:18:28] ✓ Data loading time: 3.07s
+[2026-01-05 14:18:28] ✓ Number of features: 52
+[2026-01-05 14:18:28] ✓ Subsampled train to 1.0%: (500, 57)
+[2026-01-05 14:18:28] ✓ Subsampled val to 1.0%: (500, 57)
+[2026-01-05 14:18:28] ✓ Test set - Normal: 115200, Fault: 680000
+[2026-01-05 14:18:28] ✓ Test fault rate: 85.51%
+[2026-01-05 14:18:28] ✓ Standardizing features (fit on train only)...
+[2026-01-05 14:18:28] ✓ Dataset classes defined
+[2026-01-05 14:18:28] ✓ LSTM Autoencoder model defined
+[2026-01-05 14:18:31] ✓ Sequence length: 38
+[2026-01-05 14:18:31] ✓ Batch size: 32
+[2026-01-05 14:18:31] ✓ Training windows: 463
+[2026-01-05 14:18:31] ✓ Validation windows: 463
+[2026-01-05 14:18:31] ✓ Test windows: 759310
+[2026-01-05 14:18:32] Training for up to 1 epochs with patience 1...
+[2026-01-05 14:18:33]   Epoch 1/1: Train Loss = 1.016565, Val Loss = 1.284021
+[2026-01-05 14:18:33] ✓ Best epoch: 1 (val_loss = 1.284021)
+[2026-01-05 14:18:33] ✓ Threshold percentile: 97.9%
+[2026-01-05 14:18:33] ✓ Threshold value: 1.234997
+[2026-01-05 14:18:33] ✓ Training error stats - Mean: 1.012499, Std: 0.096859
+[2026-01-05 14:19:16] ✓ Saved confusion matrix to ../outputs/figures/lstm_autoencoder_confusion_matrix_quick.png
+[2026-01-05 14:19:18] ✓ Saved metrics to ../outputs/metrics/lstm_autoencoder_metrics_quick.json
+[2026-01-05 14:19:18] ✓ Saved model to ../outputs/models/lstm_autoencoder_final_quick.pt
+[2026-01-05 14:19:18] ✓ Saved confusion matrix to ../outputs/metrics/lstm_autoencoder_confusion_matrix_quick.csv
+[2026-01-05 14:19:18] ✓ LSTM Autoencoder Final Training Complete! (QUICK MODE)
+[2026-01-05 14:19:18] Total runtime: 0m 55s
+[2026-01-05 14:19:18] Best epoch: 1
+[2026-01-05 14:19:18] Test Accuracy: 0.8990
+[2026-01-05 14:19:18] Test F1 (weighted): 0.8922
+[2026-01-05 14:19:18] Test ROC-AUC: 0.9420

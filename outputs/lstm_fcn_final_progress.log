@@ -1,0 +1,36 @@
+[2026-01-05 14:22:46] ============================================================
+[2026-01-05 14:22:46] LSTM-FCN Final Training and Evaluation
+[2026-01-05 14:22:46] ============================================================
+[2026-01-05 14:22:46] 🔬 FULL MODE (100% data, up to 100 epochs)
+[2026-01-05 14:22:46] Using FULL mode hyperparameters
+[2026-01-05 14:22:46] Hyperparameters: {'sequence_length': 40, 'lstm_hidden': 24, 'lstm_layers': 1, 'dropout': 0.4365806189303844, 'learning_rate': 0.0013924522400597294, 'batch_size': 64}
+[2026-01-05 14:22:46] ============================================================
+[2026-01-05 14:22:50] ✓ Using device: cuda
+[2026-01-05 14:23:05] ✓ Train: (864000, 57)
+[2026-01-05 14:23:05] ✓ Val: (432000, 57)
+[2026-01-05 14:23:05] ✓ Test: (2880000, 57)
+[2026-01-05 14:23:05] ✓ Data loading time: 15.20s
+[2026-01-05 14:23:05] ✓ Number of features: 52
+[2026-01-05 14:23:06] ✓ Number of classes: 18
+[2026-01-05 14:23:06] ✓ Model and dataset classes defined
+[2026-01-05 14:23:24] ✓ Train dataset: 793800 windows
+[2026-01-05 14:23:24] ✓ Val dataset: 396900 windows
+[2026-01-05 14:23:24] ✓ Test dataset: 2739600 windows
+[2026-01-05 14:23:24] ✓ Dataset creation time: 18.16s
+[2026-01-05 14:23:25] Training for up to 100 epochs with patience 10...
+[2026-01-05 14:24:42] Epoch 1/100: Train Loss = 0.236754, Val Loss = 0.080427
+[2026-01-05 14:29:39] Epoch 5/100: Train Loss = 0.045451, Val Loss = 0.046184
+[2026-01-05 14:35:44] Epoch 10/100: Train Loss = 0.039680, Val Loss = 0.034567
+[2026-01-05 14:41:37] Epoch 15/100: Train Loss = 0.032395, Val Loss = 0.042950
+[2026-01-05 14:47:24] Epoch 20/100: Train Loss = 0.030047, Val Loss = 0.043743
+[2026-01-05 14:49:38] Early stopping at epoch 22
+[2026-01-05 14:49:38] ✓ Best epoch: 12 (val_loss = 0.033670)
+[2026-01-05 14:50:59] ✓ Saved confusion matrix to ../outputs/figures/lstm_fcn_confusion_matrix.png
+[2026-01-05 14:50:59] ✓ Saved metrics to ../outputs/metrics/lstm_fcn_metrics.json
+[2026-01-05 14:50:59] ✓ Saved model to ../outputs/models/lstm_fcn_final.pt
+[2026-01-05 14:50:59] ✓ Saved confusion matrix to ../outputs/metrics/lstm_fcn_confusion_matrix.csv
+[2026-01-05 14:50:59] ✓ LSTM-FCN Final Training Complete! 
+[2026-01-05 14:50:59] Total runtime: 28m 13s
+[2026-01-05 14:50:59] Best epoch: 12
+[2026-01-05 14:50:59] Test Accuracy: 0.9937
+[2026-01-05 14:50:59] Test F1 (weighted): 0.9937

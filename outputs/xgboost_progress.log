@@ -1,78 +1,13 @@
 
-[Step 3/7] Sampling by simulation runs (50.0% of runs, min 5/class)...
-✓ Sampled - Train: (432000, 57) (900 runs), Val: (216000, 57) (450 runs)
+[Step 3/7] Sampling by simulation runs (1.0% of runs, min 5/class)...
+✓ Sampled - Train: (43200, 57) (90 runs), Val: (43200, 57) (90 runs)
 
 ============================================================
 [Step 6/6] Starting Optuna hyperparameter optimization
 ============================================================
 
-Running 50 trials...
-Trial 1/50: F1=0.9123 (best=0.9123)
-Trial 2/50: F1=0.9223 (best=0.9223)
-Trial 3/50: F1=0.8658 (best=0.9223)
-Trial 4/50: F1=0.8730 (best=0.9223)
-Trial 5/50: F1=0.9041 (best=0.9223)
-Trial 6/50: F1=0.7434 (best=0.9223)
-Trial 7/50: F1=0.8515 (best=0.9223)
-Trial 8/50: F1=0.9084 (best=0.9223)
-Trial 9/50: F1=0.9226 (best=0.9226)
-Trial 10/50: F1=0.9024 (best=0.9226)
-Trial 11/50: F1=0.9195 (best=0.9226)
-Trial 12/50: F1=0.9225 (best=0.9226)
-Trial 13/50: F1=0.9213 (best=0.9226)
-Trial 14/50: F1=0.9220 (best=0.9226)
-Trial 15/50: F1=0.9220 (best=0.9226)
-Trial 16/50: F1=0.9207 (best=0.9226)
-Trial 17/50: F1=0.9199 (best=0.9226)
-Trial 18/50: F1=0.9216 (best=0.9226)
-Trial 19/50: F1=0.9167 (best=0.9226)
-Trial 20/50: F1=0.8836 (best=0.9226)
-Trial 21/50: F1=0.9208 (best=0.9226)
-Trial 22/50: F1=0.9222 (best=0.9226)
-Trial 23/50: F1=0.9223 (best=0.9226)
-Trial 24/50: F1=0.9214 (best=0.9226)
-Trial 25/50: F1=0.9100 (best=0.9226)
-Trial 26/50: F1=0.9221 (best=0.9226)
-Trial 27/50: F1=0.9208 (best=0.9226)
-Trial 28/50: F1=0.9179 (best=0.9226)
-Trial 29/50: F1=0.9217 (best=0.9226)
-Trial 30/50: F1=0.9049 (best=0.9226)
-Trial 31/50: F1=0.9202 (best=0.9226)
-Trial 32/50: F1=0.9226 (best=0.9226)
-Trial 33/50: F1=0.9222 (best=0.9226)
-Trial 34/50: F1=0.9212 (best=0.9226)
-Trial 35/50: F1=0.9215 (best=0.9226)
-Trial 36/50: F1=0.9229 (best=0.9229)
-Trial 37/50: F1=0.9228 (best=0.9229)
-Trial 38/50: F1=0.9227 (best=0.9229)
-Trial 39/50: F1=0.9236 (best=0.9236)
-Trial 40/50: F1=0.9233 (best=0.9236)
-Trial 41/50: F1=0.9220 (best=0.9236)
-Trial 42/50: F1=0.9235 (best=0.9236)
-Trial 43/50: F1=0.9223 (best=0.9236)
-Trial 44/50: F1=0.9231 (best=0.9236)
-Trial 45/50: F1=0.9221 (best=0.9236)
-Trial 46/50: F1=0.9223 (best=0.9236)
-Trial 47/50: F1=0.9231 (best=0.9236)
-Trial 48/50: F1=0.9217 (best=0.9236)
-Trial 49/50: F1=0.9186 (best=0.9236)
-Trial 50/50: F1=0.9228 (best=0.9236)
-
-============================================================
-✓ Optimization complete!
-============================================================
-Total optimization time: 26863.09s
-Time per trial: 537.26s
-
-Saving results...
-✓ Saved best hyperparameters to ../outputs/hyperparams/xgboost_best.json
-✓ Saved Optuna study to ../outputs/optuna_studies/xgboost_study.pkl
-
-============================================================
-✓ XGBoost Hyperparameter Tuning Complete!
-============================================================
-Started at: 2026-01-04 01:22:23
-Ended at: 2026-01-04 08:50:16
-Total runtime: 447m 53s (26873.18s)
-Best F1-score: 0.9236
-============================================================
+Running 5 trials...
+Trial 1/5: F1=0.8521 (best=0.8521)
+Trial 2/5: F1=0.8547 (best=0.8547)
+Trial 3/5: F1=0.8644 (best=0.8644)
+Trial 4/5: F1=0.8632 (best=0.8644)

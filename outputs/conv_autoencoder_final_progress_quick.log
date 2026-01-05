@@ -1,0 +1,42 @@
+[2026-01-05 14:19:23] ============================================================
+[2026-01-05 14:19:23] Convolutional Autoencoder Final Training and Evaluation
+[2026-01-05 14:19:23] ============================================================
+[2026-01-05 14:19:23] 🚀 QUICK MODE (1% data, 1 epoch)
+[2026-01-05 14:19:23] Using FULL mode hyperparameters
+[2026-01-05 14:19:23] Hyperparameters: {'sequence_length': 40, 'conv_filters': 64, 'kernel_size': 3, 'latent_filters': 128, 'use_transformer': False, 'dropout': 0.11928321723176455, 'learning_rate': 0.00853432554832179, 'batch_size': 128, 'threshold_percentile': 98.65427130589171}
+[2026-01-05 14:19:23] ============================================================
+[2026-01-05 14:19:26] ✓ Using device: cuda
+[2026-01-05 14:19:29] ✓ Train (normal only): (50000, 57)
+[2026-01-05 14:19:29] ✓ Val (normal only): (25000, 57)
+[2026-01-05 14:19:29] ✓ Test (mixed): (795200, 57)
+[2026-01-05 14:19:29] ✓ Data loading time: 3.09s
+[2026-01-05 14:19:29] ✓ Number of features: 52
+[2026-01-05 14:19:29] ✓ Subsampled train to 1.0%: (500, 57)
+[2026-01-05 14:19:29] ✓ Subsampled val to 1.0%: (500, 57)
+[2026-01-05 14:19:29] ✓ Test set - Normal: 115200, Fault: 680000
+[2026-01-05 14:19:29] ✓ Test fault rate: 85.51%
+[2026-01-05 14:19:29] ✓ Standardizing features (fit on train only)...
+[2026-01-05 14:19:29] ✓ Dataset classes defined
+[2026-01-05 14:19:29] ✓ Convolutional Autoencoder model defined
+[2026-01-05 14:19:32] ✓ Sequence length: 40
+[2026-01-05 14:19:32] ✓ Batch size: 128
+[2026-01-05 14:19:32] ✓ Training windows: 461
+[2026-01-05 14:19:32] ✓ Validation windows: 461
+[2026-01-05 14:19:32] ✓ Test windows: 757370
+[2026-01-05 14:19:32] ✓ Model configuration:
+[2026-01-05 14:19:33] Training for up to 1 epochs with patience 1...
+[2026-01-05 14:19:34]   Epoch 1/1: Train Loss = 0.955577, Val Loss = 1.010908
+[2026-01-05 14:19:34] ✓ Best epoch: 1 (val_loss = 1.010908)
+[2026-01-05 14:19:35] ✓ Threshold percentile: 98.7%
+[2026-01-05 14:19:35] ✓ Threshold value: 0.976851
+[2026-01-05 14:19:35] ✓ Training error stats - Mean: 0.855075, Std: 0.048126
+[2026-01-05 14:19:48] ✓ Saved confusion matrix to ../outputs/figures/conv_autoencoder_confusion_matrix_quick.png
+[2026-01-05 14:19:51] ✓ Saved metrics to ../outputs/metrics/conv_autoencoder_metrics_quick.json
+[2026-01-05 14:19:51] ✓ Saved model to ../outputs/models/conv_autoencoder_final_quick.pt
+[2026-01-05 14:19:51] ✓ Saved confusion matrix to ../outputs/metrics/conv_autoencoder_confusion_matrix_quick.csv
+[2026-01-05 14:19:51] ✓ Convolutional Autoencoder Final Training Complete! (QUICK MODE)
+[2026-01-05 14:19:51] Total runtime: 0m 27s
+[2026-01-05 14:19:51] Best epoch: 1
+[2026-01-05 14:19:51] Test Accuracy: 0.9058
+[2026-01-05 14:19:51] Test F1 (weighted): 0.8928
+[2026-01-05 14:19:51] Test ROC-AUC: 0.9619

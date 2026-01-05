@@ -1,0 +1,44 @@
+[2026-01-05 14:22:47] ============================================================
+[2026-01-05 14:22:47] LSTM Autoencoder Final Training and Evaluation
+[2026-01-05 14:22:47] ============================================================
+[2026-01-05 14:22:47] 🔬 FULL MODE (100% data, up to 100 epochs)
+[2026-01-05 14:22:47] Using FULL mode hyperparameters
+[2026-01-05 14:22:47] Hyperparameters: {'sequence_length': 38, 'hidden_size': 64, 'num_layers': 1, 'latent_size': 32, 'dropout': 0.07330677630698543, 'learning_rate': 0.0003199821382944991, 'batch_size': 32, 'threshold_percentile': 97.94631693879482}
+[2026-01-05 14:22:47] ============================================================
+[2026-01-05 14:22:50] ✓ Using device: cuda
+[2026-01-05 14:22:53] ✓ Train (normal only): (50000, 57)
+[2026-01-05 14:22:53] ✓ Val (normal only): (25000, 57)
+[2026-01-05 14:22:53] ✓ Test (mixed): (795200, 57)
+[2026-01-05 14:22:53] ✓ Data loading time: 3.03s
+[2026-01-05 14:22:53] ✓ Number of features: 52
+[2026-01-05 14:22:53] ✓ Test set - Normal: 115200, Fault: 680000
+[2026-01-05 14:22:53] ✓ Test fault rate: 85.51%
+[2026-01-05 14:22:53] ✓ Standardizing features (fit on train only)...
+[2026-01-05 14:22:54] ✓ Dataset classes defined
+[2026-01-05 14:22:54] ✓ LSTM Autoencoder model defined
+[2026-01-05 14:22:57] ✓ Sequence length: 38
+[2026-01-05 14:22:57] ✓ Batch size: 32
+[2026-01-05 14:22:57] ✓ Training windows: 46300
+[2026-01-05 14:22:57] ✓ Validation windows: 23150
+[2026-01-05 14:22:57] ✓ Test windows: 759310
+[2026-01-05 14:22:58] Training for up to 100 epochs with patience 10...
+[2026-01-05 14:23:09]   Epoch 1/100: Train Loss = 0.801377, Val Loss = 0.759966
+[2026-01-05 14:25:03]   Epoch 10/100: Train Loss = 0.670657, Val Loss = 0.667327
+[2026-01-05 14:27:07]   Epoch 20/100: Train Loss = 0.650885, Val Loss = 0.649527
+[2026-01-05 14:29:06]   Epoch 30/100: Train Loss = 0.647965, Val Loss = 0.647229
+[2026-01-05 14:31:10]   Epoch 40/100: Train Loss = 0.646949, Val Loss = 0.646878
+[2026-01-05 14:33:16]   Epoch 50/100: Train Loss = 0.646302, Val Loss = 0.646791
+[2026-01-05 14:34:44] ✓ Best epoch: 47 (val_loss = 0.646432)
+[2026-01-05 14:34:47] ✓ Threshold percentile: 97.9%
+[2026-01-05 14:34:47] ✓ Threshold value: 0.730866
+[2026-01-05 14:34:47] ✓ Training error stats - Mean: 0.646195, Std: 0.039205
+[2026-01-05 14:36:12] ✓ Saved confusion matrix to ../outputs/figures/lstm_autoencoder_confusion_matrix.png
+[2026-01-05 14:36:15] ✓ Saved metrics to ../outputs/metrics/lstm_autoencoder_metrics.json
+[2026-01-05 14:36:15] ✓ Saved model to ../outputs/models/lstm_autoencoder_final.pt
+[2026-01-05 14:36:15] ✓ Saved confusion matrix to ../outputs/metrics/lstm_autoencoder_confusion_matrix.csv
+[2026-01-05 14:36:15] ✓ LSTM Autoencoder Final Training Complete! 
+[2026-01-05 14:36:15] Total runtime: 13m 28s
+[2026-01-05 14:36:15] Best epoch: 47
+[2026-01-05 14:36:15] Test Accuracy: 0.9696
+[2026-01-05 14:36:15] Test F1 (weighted): 0.9705
+[2026-01-05 14:36:15] Test ROC-AUC: 0.9925

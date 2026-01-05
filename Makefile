@@ -283,9 +283,16 @@ FINAL_CNNTRANS_MODEL := $(MODELS_DIR)/cnn_transformer_final$(MODE_SUFFIX).pt
 FINAL_TRANSKAL_MODEL := $(MODELS_DIR)/transkal_final$(MODE_SUFFIX).pt
 FINAL_LSTMAE_MODEL := $(MODELS_DIR)/lstm_autoencoder_final$(MODE_SUFFIX).pt
 FINAL_CONVAE_MODEL := $(MODELS_DIR)/conv_autoencoder_final$(MODE_SUFFIX).pt
-FINAL_COMPARISON := $(METRICS_DIR)/model_comparison_combined.csv
+FINAL_COMPARISON := $(METRICS_DIR)/model_comparison_combined$(MODE_SUFFIX).csv
 
 final-training: final-xgboost final-lstm final-lstm-fcn final-cnn-transformer final-transkal final-lstm-ae final-conv-ae final-comparison ## Run all final training notebooks (20-series)
+	@echo "✓ All final training complete"
+
+final-training-parallel: ## Run all 7 model training notebooks in parallel (use with: make -j7 final-training-parallel)
+	@echo "Training all models in parallel (QUICK_MODE=$(if $(QUICK_MODE),$(QUICK_MODE),False))..."
+	$(MAKE) -j7 final-xgboost final-lstm final-lstm-fcn final-cnn-transformer final-transkal final-lstm-ae final-conv-ae
+	@echo "✓ All models trained in parallel"
+	$(MAKE) final-comparison
 	@echo "✓ All final training complete"
 
 final-xgboost: $(FINAL_XGBOOST_MODEL) ## Train final XGBoost model
@@ -296,6 +303,7 @@ $(FINAL_XGBOOST_MODEL): $(FINAL_XGBOOST_NB) $(HYPERPARAM_XGBOOST) $(MULTICLASS_T
 	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
 		--log-level=INFO \
 		$(FINAL_XGBOOST_NB)
+	@touch $@
 	@echo "✓ XGBoost final model trained"
 
 final-lstm: $(FINAL_LSTM_MODEL) ## Train final LSTM model
@@ -306,6 +314,7 @@ $(FINAL_LSTM_MODEL): $(FINAL_LSTM_NB) $(HYPERPARAM_LSTM) $(MULTICLASS_TRAIN)
 	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
 		--log-level=INFO \
 		$(FINAL_LSTM_NB)
+	@touch $@
 	@echo "✓ LSTM final model trained"
 
 final-lstm-fcn: $(FINAL_LSTMFCN_MODEL) ## Train final LSTM-FCN model
@@ -316,6 +325,7 @@ $(FINAL_LSTMFCN_MODEL): $(FINAL_LSTMFCN_NB) $(HYPERPARAM_LSTMFCN) $(MULTICLASS_T
 	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
 		--log-level=INFO \
 		$(FINAL_LSTMFCN_NB)
+	@touch $@
 	@echo "✓ LSTM-FCN final model trained"
 
 final-cnn-transformer: $(FINAL_CNNTRANS_MODEL) ## Train final CNN+Transformer model
@@ -326,6 +336,7 @@ $(FINAL_CNNTRANS_MODEL): $(FINAL_CNNTRANS_NB) $(HYPERPARAM_CNNTRANS) $(MULTICLAS
 	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
 		--log-level=INFO \
 		$(FINAL_CNNTRANS_NB)
+	@touch $@
 	@echo "✓ CNN+Transformer final model trained"
 
 final-transkal: $(FINAL_TRANSKAL_MODEL) ## Train final TransKal model
@@ -336,6 +347,7 @@ $(FINAL_TRANSKAL_MODEL): $(FINAL_TRANSKAL_NB) $(HYPERPARAM_TRANSKAL) $(MULTICLAS
 	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
 		--log-level=INFO \
 		$(FINAL_TRANSKAL_NB)
+	@touch $@
 	@echo "✓ TransKal final model trained"
 
 final-lstm-ae: $(FINAL_LSTMAE_MODEL) ## Train final LSTM Autoencoder model
@@ -346,6 +358,7 @@ $(FINAL_LSTMAE_MODEL): $(FINAL_LSTMAE_NB) $(HYPERPARAM_LSTMAE) $(BINARY_TRAIN)
 	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
 		--log-level=INFO \
 		$(FINAL_LSTMAE_NB)
+	@touch $@
 	@echo "✓ LSTM Autoencoder final model trained"
 
 final-conv-ae: $(FINAL_CONVAE_MODEL) ## Train final Convolutional Autoencoder model
@@ -356,6 +369,7 @@ $(FINAL_CONVAE_MODEL): $(FINAL_CONVAE_NB) $(HYPERPARAM_CONVAE) $(BINARY_TRAIN)
 	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
 		--log-level=INFO \
 		$(FINAL_CONVAE_NB)
+	@touch $@
 	@echo "✓ Convolutional Autoencoder final model trained"
 
 final-comparison: $(FINAL_COMPARISON) ## Generate model comparison summary
@@ -365,6 +379,7 @@ $(FINAL_COMPARISON): $(FINAL_COMPARISON_NB) $(FINAL_XGBOOST_MODEL) $(FINAL_LSTM_
 	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
 		--log-level=INFO \
 		$(FINAL_COMPARISON_NB)
+	@touch $@
 	@echo "✓ Model comparison summary generated"
 
 ##@ Utilities

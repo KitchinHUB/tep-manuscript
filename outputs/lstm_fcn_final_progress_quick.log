@@ -1,0 +1,33 @@
+[2026-01-05 14:07:28] ============================================================
+[2026-01-05 14:07:28] LSTM-FCN Final Training and Evaluation
+[2026-01-05 14:07:28] ============================================================
+[2026-01-05 14:07:28] 🚀 QUICK MODE (1% data, 1 epoch)
+[2026-01-05 14:07:28] Using FULL mode hyperparameters
+[2026-01-05 14:07:28] Hyperparameters: {'sequence_length': 40, 'lstm_hidden': 24, 'lstm_layers': 1, 'dropout': 0.4365806189303844, 'learning_rate': 0.0013924522400597294, 'batch_size': 64}
+[2026-01-05 14:07:28] ============================================================
+[2026-01-05 14:07:31] ✓ Using device: cuda
+[2026-01-05 14:07:46] ✓ Train: (864000, 57)
+[2026-01-05 14:07:46] ✓ Val: (432000, 57)
+[2026-01-05 14:07:46] ✓ Test: (2880000, 57)
+[2026-01-05 14:07:46] ✓ Data loading time: 15.19s
+[2026-01-05 14:07:46] ✓ Number of features: 52
+[2026-01-05 14:07:46] ✓ Subsampled train to 1.0%: (8640, 57)
+[2026-01-05 14:07:46] ✓ Subsampled val to 1.0%: (4320, 57)
+[2026-01-05 14:07:47] ✓ Number of classes: 18
+[2026-01-05 14:07:47] ✓ Model and dataset classes defined
+[2026-01-05 14:07:58] ✓ Train dataset: 7938 windows
+[2026-01-05 14:07:58] ✓ Val dataset: 3969 windows
+[2026-01-05 14:07:58] ✓ Test dataset: 2739600 windows
+[2026-01-05 14:07:58] ✓ Dataset creation time: 11.01s
+[2026-01-05 14:07:59] Training for up to 1 epochs with patience 1...
+[2026-01-05 14:08:00] Epoch 1/1: Train Loss = 1.745089, Val Loss = 2.219558
+[2026-01-05 14:08:00] ✓ Best epoch: 1 (val_loss = 2.219558)
+[2026-01-05 14:09:09] ✓ Saved confusion matrix to ../outputs/figures/lstm_fcn_confusion_matrix_quick.png
+[2026-01-05 14:09:10] ✓ Saved metrics to ../outputs/metrics/lstm_fcn_metrics_quick.json
+[2026-01-05 14:09:10] ✓ Saved model to ../outputs/models/lstm_fcn_final_quick.pt
+[2026-01-05 14:09:10] ✓ Saved confusion matrix to ../outputs/metrics/lstm_fcn_confusion_matrix_quick.csv
+[2026-01-05 14:09:10] ✓ LSTM-FCN Final Training Complete! (QUICK MODE)
+[2026-01-05 14:09:10] Total runtime: 1m 41s
+[2026-01-05 14:09:10] Best epoch: 1
+[2026-01-05 14:09:10] Test Accuracy: 0.3512
+[2026-01-05 14:09:10] Test F1 (weighted): 0.2747
