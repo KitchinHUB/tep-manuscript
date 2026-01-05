@@ -4,10 +4,10 @@
 
 [Step 2/6] Loading data...
 ✓ Full data - Train: (50000, 57), Val: (25000, 57), Test: (795200, 57)
-✓ Train (normal only): (2500, 57) (5 runs)
-✓ Eval (from test): (72800, 58) (90 runs)
-  - Normal samples: 4800, Fault samples: 68000
-  - Fault rate: 93.41%
+✓ Train (normal only): (25000, 57) (50 runs)
+✓ Eval (from test): (397600, 58) (485 runs)
+  - Normal samples: 57600, Fault samples: 340000
+  - Fault rate: 85.51%
 ✓ Features: 52
 
 [Step 3/6] Defining LSTM Autoencoder model...
@@ -20,22 +20,67 @@
 [Step 5/6] Starting optimization
 ============================================================
 
-Running 5 trials...
-Trial 1/5: F1=0.9229 (best=0.9229)
-Trial 2/5: F1=0.9526 (best=0.9526)
-Trial 3/5: F1=0.9640 (best=0.9640)
-Trial 4/5: F1=0.8974 (best=0.9640)
-Trial 5/5: F1=0.9388 (best=0.9640)
+Running 50 trials...
+Trial 1/50: F1=0.9481 (best=0.9481)
+Trial 2/50: F1=0.9372 (best=0.9481)
+Trial 3/50: F1=0.8235 (best=0.9481)
+Trial 4/50: F1=0.9385 (best=0.9481)
+Trial 5/50: F1=0.9440 (best=0.9481)
+Trial 6/50: F1=0.8647 (best=0.9481)
+Trial 7/50: F1=0.9418 (best=0.9481)
+Trial 8/50: F1=0.7869 (best=0.9481)
+Trial 9/50: F1=0.9576 (best=0.9576)
+Trial 10/50: F1=0.9684 (best=0.9684)
+Trial 11/50: F1=0.9641 (best=0.9684)
+Trial 12/50: F1=0.9642 (best=0.9684)
+Trial 13/50: F1=0.9620 (best=0.9684)
+Trial 14/50: F1=0.9509 (best=0.9684)
+Trial 15/50: F1=0.9653 (best=0.9684)
+Trial 16/50: F1=0.9645 (best=0.9684)
+Trial 17/50: F1=0.9692 (best=0.9692)
+Trial 18/50: F1=0.9775 (best=0.9775)
+Trial 19/50: F1=0.9754 (best=0.9775)
+Trial 20/50: F1=0.9556 (best=0.9775)
+Trial 21/50: F1=0.9726 (best=0.9775)
+Trial 22/50: F1=0.9745 (best=0.9775)
+Trial 23/50: F1=0.9719 (best=0.9775)
+Trial 24/50: F1=0.9758 (best=0.9775)
+Trial 25/50: F1=0.9754 (best=0.9775)
+Trial 26/50: F1=0.9789 (best=0.9789)
+Trial 27/50: F1=0.9800 (best=0.9800)
+Trial 28/50: F1=0.9573 (best=0.9800)
+Trial 29/50: F1=0.9466 (best=0.9800)
+Trial 30/50: F1=0.9380 (best=0.9800)
+Trial 31/50: F1=0.9220 (best=0.9800)
+Trial 32/50: F1=0.9742 (best=0.9800)
+Trial 33/50: F1=0.9767 (best=0.9800)
+Trial 34/50: F1=0.9817 (best=0.9817)
+Trial 35/50: F1=0.9715 (best=0.9817)
+Trial 36/50: F1=0.9758 (best=0.9817)
+Trial 37/50: F1=0.9515 (best=0.9817)
+Trial 38/50: F1=0.8201 (best=0.9817)
+Trial 39/50: F1=0.9003 (best=0.9817)
+Trial 40/50: F1=0.9772 (best=0.9817)
+Trial 41/50: F1=0.7916 (best=0.9817)
+Trial 42/50: F1=0.9764 (best=0.9817)
+Trial 43/50: F1=0.9727 (best=0.9817)
+Trial 44/50: F1=0.9767 (best=0.9817)
+Trial 45/50: F1=0.9770 (best=0.9817)
+Trial 46/50: F1=0.9612 (best=0.9817)
+Trial 47/50: F1=0.9766 (best=0.9817)
+Trial 48/50: F1=0.9400 (best=0.9817)
+Trial 49/50: F1=0.9768 (best=0.9817)
+Trial 50/50: F1=0.9629 (best=0.9817)
 
 ============================================================
 ✓ Optimization complete!
-Total time: 23.22s
+Total time: 9221.73s
 
 [Step 6/6] Saving results...
-✓ Saved to ../outputs/hyperparams/lstm_autoencoder_best_quick.json
+✓ Saved to ../outputs/hyperparams/lstm_autoencoder_best.json
 
 ============================================================
 ✓ LSTM Autoencoder Hyperparameter Tuning Complete!
-Runtime: 0m 30s
-Best F1: 0.9640
+Runtime: 153m 47s
+Best F1: 0.9817
 ============================================================

@@ -4,7 +4,7 @@
 
 [Step 2/6] Loading data...
 ✓ Full data - Train: (864000, 57), Val: (432000, 57)
-✓ Sampled - Train: (43200, 57) (90 runs), Val: (43200, 57) (90 runs)
+✓ Sampled - Train: (432000, 57) (900 runs), Val: (216000, 57) (450 runs)
 ✓ Features: 52, Classes: 18
 
 [Step 3/6] Defining CNN-Transformer model...
@@ -17,22 +17,67 @@
 [Step 5/6] Starting optimization
 ============================================================
 
-Running 5 trials...
-Trial 1/5: F1=0.9007 (best=0.9007)
-Trial 2/5: F1=0.8844 (best=0.9007)
-Trial 3/5: F1=0.9491 (best=0.9491)
-Trial 4/5: F1=0.9481 (best=0.9491)
-Trial 5/5: F1=0.9432 (best=0.9491)
+Running 50 trials...
+Trial 1/50: F1=0.9783 (best=0.9783)
+Trial 2/50: F1=0.9863 (best=0.9863)
+Trial 3/50: F1=0.0058 (best=0.9863)
+Trial 4/50: F1=0.9865 (best=0.9865)
+Trial 5/50: F1=0.9812 (best=0.9865)
+Trial 6/50: F1=0.9453 (best=0.9865)
+Trial 7/50: F1=0.8577 (best=0.9865)
+Trial 8/50: F1=0.9826 (best=0.9865)
+Trial 9/50: F1=0.9817 (best=0.9865)
+Trial 10/50: F1=0.9771 (best=0.9865)
+Trial 11/50: F1=0.9863 (best=0.9865)
+Trial 12/50: F1=0.9867 (best=0.9867)
+Trial 13/50: F1=0.9857 (best=0.9867)
+Trial 14/50: F1=0.9814 (best=0.9867)
+Trial 15/50: F1=0.9865 (best=0.9867)
+Trial 16/50: F1=0.9825 (best=0.9867)
+Trial 17/50: F1=0.9833 (best=0.9867)
+Trial 18/50: F1=0.9861 (best=0.9867)
+Trial 19/50: F1=0.9873 (best=0.9873)
+Trial 20/50: F1=0.9870 (best=0.9873)
+Trial 21/50: F1=0.9872 (best=0.9873)
+Trial 22/50: F1=0.9870 (best=0.9873)
+Trial 23/50: F1=0.9846 (best=0.9873)
+Trial 24/50: F1=0.9862 (best=0.9873)
+Trial 25/50: F1=0.9865 (best=0.9873)
+Trial 26/50: F1=0.9862 (best=0.9873)
+Trial 27/50: F1=0.9840 (best=0.9873)
+Trial 28/50: F1=0.9843 (best=0.9873)
+Trial 29/50: F1=0.9823 (best=0.9873)
+Trial 30/50: F1=0.9801 (best=0.9873)
+Trial 31/50: F1=0.9839 (best=0.9873)
+Trial 32/50: F1=0.9865 (best=0.9873)
+Trial 33/50: F1=0.9882 (best=0.9882)
+Trial 34/50: F1=0.9862 (best=0.9882)
+Trial 35/50: F1=0.9869 (best=0.9882)
+Trial 36/50: F1=0.9847 (best=0.9882)
+Trial 37/50: F1=0.9866 (best=0.9882)
+Trial 38/50: F1=0.9865 (best=0.9882)
+Trial 39/50: F1=0.9865 (best=0.9882)
+Trial 40/50: F1=0.2644 (best=0.9882)
+Trial 41/50: F1=0.9862 (best=0.9882)
+Trial 42/50: F1=0.9883 (best=0.9883)
+Trial 43/50: F1=0.9873 (best=0.9883)
+Trial 44/50: F1=0.9873 (best=0.9883)
+Trial 45/50: F1=0.9885 (best=0.9885)
+Trial 46/50: F1=0.9836 (best=0.9885)
+Trial 47/50: F1=0.9886 (best=0.9886)
+Trial 48/50: F1=0.9890 (best=0.9890)
+Trial 49/50: F1=0.9866 (best=0.9890)
+Trial 50/50: F1=0.9864 (best=0.9890)
 
 ============================================================
 ✓ Optimization complete!
-Total time: 344.72s
+Total time: 30135.24s
 
 [Step 6/6] Saving results...
-✓ Saved to ../outputs/hyperparams/cnn_transformer_best_quick.json
+✓ Saved to ../outputs/hyperparams/cnn_transformer_best.json
 
 ============================================================
 ✓ CNN-Transformer Hyperparameter Tuning Complete!
-Runtime: 5m 52s
-Best F1: 0.9491
+Runtime: 502m 29s
+Best F1: 0.9890
 ============================================================

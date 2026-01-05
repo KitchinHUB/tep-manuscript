@@ -4,10 +4,10 @@
 
 [Step 2/6] Loading data...
 ✓ Full data - Train: (50000, 57), Val: (25000, 57), Test: (795200, 57)
-✓ Train (normal only): (2500, 57) (5 runs)
-✓ Eval (from test): (72800, 58) (90 runs)
-  - Normal samples: 4800, Fault samples: 68000
-  - Fault rate: 93.41%
+✓ Train (normal only): (25000, 57) (50 runs)
+✓ Eval (from test): (397600, 58) (485 runs)
+  - Normal samples: 57600, Fault samples: 340000
+  - Fault rate: 85.51%
 ✓ Features: 52
 
 [Step 3/6] Defining Convolutional Autoencoder model...
@@ -20,22 +20,67 @@
 [Step 5/6] Starting optimization
 ============================================================
 
-Running 5 trials...
-Trial 1/5: F1=0.9017 (best=0.9017)
-Trial 2/5: F1=0.9163 (best=0.9163)
-Trial 3/5: F1=0.9135 (best=0.9163)
-Trial 4/5: F1=0.9079 (best=0.9163)
-Trial 5/5: F1=0.9015 (best=0.9163)
+Running 50 trials...
+Trial 1/50: F1=0.9880 (best=0.9880)
+Trial 2/50: F1=0.9504 (best=0.9880)
+Trial 3/50: F1=0.9740 (best=0.9880)
+Trial 4/50: F1=0.9715 (best=0.9880)
+Trial 5/50: F1=0.9469 (best=0.9880)
+Trial 6/50: F1=0.9819 (best=0.9880)
+Trial 7/50: F1=0.9820 (best=0.9880)
+Trial 8/50: F1=0.9478 (best=0.9880)
+Trial 9/50: F1=0.9562 (best=0.9880)
+Trial 10/50: F1=0.9843 (best=0.9880)
+Trial 11/50: F1=0.9886 (best=0.9886)
+Trial 12/50: F1=0.9880 (best=0.9886)
+Trial 13/50: F1=0.9888 (best=0.9888)
+Trial 14/50: F1=0.9734 (best=0.9888)
+Trial 15/50: F1=0.9880 (best=0.9888)
+Trial 16/50: F1=0.9797 (best=0.9888)
+Trial 17/50: F1=0.9766 (best=0.9888)
+Trial 18/50: F1=0.9669 (best=0.9888)
+Trial 19/50: F1=0.9883 (best=0.9888)
+Trial 20/50: F1=0.9854 (best=0.9888)
+Trial 21/50: F1=0.9890 (best=0.9890)
+Trial 22/50: F1=0.9902 (best=0.9902)
+Trial 23/50: F1=0.9886 (best=0.9902)
+Trial 24/50: F1=0.9852 (best=0.9902)
+Trial 25/50: F1=0.9903 (best=0.9903)
+Trial 26/50: F1=0.9898 (best=0.9903)
+Trial 27/50: F1=0.9521 (best=0.9903)
+Trial 28/50: F1=0.9846 (best=0.9903)
+Trial 29/50: F1=0.9822 (best=0.9903)
+Trial 30/50: F1=0.9900 (best=0.9903)
+Trial 31/50: F1=0.9904 (best=0.9904)
+Trial 32/50: F1=0.9907 (best=0.9907)
+Trial 33/50: F1=0.9888 (best=0.9907)
+Trial 34/50: F1=0.9912 (best=0.9912)
+Trial 35/50: F1=0.9908 (best=0.9912)
+Trial 36/50: F1=0.9609 (best=0.9912)
+Trial 37/50: F1=0.9413 (best=0.9912)
+Trial 38/50: F1=0.9852 (best=0.9912)
+Trial 39/50: F1=0.9904 (best=0.9912)
+Trial 40/50: F1=0.9838 (best=0.9912)
+Trial 41/50: F1=0.9884 (best=0.9912)
+Trial 42/50: F1=0.9906 (best=0.9912)
+Trial 43/50: F1=0.9917 (best=0.9917)
+Trial 44/50: F1=0.9913 (best=0.9917)
+Trial 45/50: F1=0.9920 (best=0.9920)
+Trial 46/50: F1=0.9844 (best=0.9920)
+Trial 47/50: F1=0.9927 (best=0.9927)
+Trial 48/50: F1=0.9495 (best=0.9927)
+Trial 49/50: F1=0.9852 (best=0.9927)
+Trial 50/50: F1=0.9937 (best=0.9937)
 
 ============================================================
 ✓ Optimization complete!
-Total time: 31.30s
+Total time: 4248.65s
 
 [Step 6/6] Saving results...
-✓ Saved to ../outputs/hyperparams/conv_autoencoder_best_quick.json
+✓ Saved to ../outputs/hyperparams/conv_autoencoder_best.json
 
 ============================================================
 ✓ Convolutional Autoencoder Hyperparameter Tuning Complete!
-Runtime: 0m 37s
-Best F1: 0.9163
+Runtime: 70m 54s
+Best F1: 0.9937
 ============================================================

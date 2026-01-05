@@ -4,7 +4,7 @@
 
 [Step 2/6] Loading data...
 ✓ Full data - Train: (864000, 57), Val: (432000, 57)
-✓ Sampled - Train: (43200, 57) (90 runs), Val: (43200, 57) (90 runs)
+✓ Sampled - Train: (432000, 57) (900 runs), Val: (216000, 57) (450 runs)
 ✓ Features: 52, Classes: 18
 
 [Step 3/6] Defining TransKal model...
@@ -17,22 +17,67 @@
 [Step 5/6] Starting optimization
 ============================================================
 
-Running 5 trials...
-Trial 1/5: F1=0.9664 (best=0.9664)
-Trial 2/5: F1=0.8539 (best=0.9664)
-Trial 3/5: F1=0.8413 (best=0.9664)
-Trial 4/5: F1=0.9716 (best=0.9716)
-Trial 5/5: F1=0.9187 (best=0.9716)
+Running 50 trials...
+Trial 1/50: F1=0.8110 (best=0.8110)
+Trial 2/50: F1=0.8141 (best=0.8141)
+Trial 3/50: F1=0.8392 (best=0.8392)
+Trial 4/50: F1=0.9779 (best=0.9779)
+Trial 5/50: F1=0.9569 (best=0.9779)
+Trial 6/50: F1=0.9448 (best=0.9779)
+Trial 7/50: F1=0.9836 (best=0.9836)
+Trial 8/50: F1=0.9780 (best=0.9836)
+Trial 9/50: F1=0.4202 (best=0.9836)
+Trial 10/50: F1=0.9803 (best=0.9836)
+Trial 11/50: F1=0.9704 (best=0.9836)
+Trial 12/50: F1=0.9821 (best=0.9836)
+Trial 13/50: F1=0.9822 (best=0.9836)
+Trial 14/50: F1=0.9842 (best=0.9842)
+Trial 15/50: F1=0.9834 (best=0.9842)
+Trial 16/50: F1=0.9786 (best=0.9842)
+Trial 17/50: F1=0.9868 (best=0.9868)
+Trial 18/50: F1=0.9877 (best=0.9877)
+Trial 19/50: F1=0.9868 (best=0.9877)
+Trial 20/50: F1=0.9868 (best=0.9877)
+Trial 21/50: F1=0.9862 (best=0.9877)
+Trial 22/50: F1=0.9867 (best=0.9877)
+Trial 23/50: F1=0.9865 (best=0.9877)
+Trial 24/50: F1=0.9856 (best=0.9877)
+Trial 25/50: F1=0.9870 (best=0.9877)
+Trial 26/50: F1=0.9870 (best=0.9877)
+Trial 27/50: F1=0.9800 (best=0.9877)
+Trial 28/50: F1=0.9820 (best=0.9877)
+Trial 29/50: F1=0.9853 (best=0.9877)
+Trial 30/50: F1=0.9847 (best=0.9877)
+Trial 31/50: F1=0.9782 (best=0.9877)
+Trial 32/50: F1=0.9878 (best=0.9878)
+Trial 33/50: F1=0.9871 (best=0.9878)
+Trial 34/50: F1=0.9877 (best=0.9878)
+Trial 35/50: F1=0.9788 (best=0.9878)
+Trial 36/50: F1=0.9848 (best=0.9878)
+Trial 37/50: F1=0.9851 (best=0.9878)
+Trial 38/50: F1=0.9860 (best=0.9878)
+Trial 39/50: F1=0.9783 (best=0.9878)
+Trial 40/50: F1=0.9850 (best=0.9878)
+Trial 41/50: F1=0.9851 (best=0.9878)
+Trial 42/50: F1=0.9867 (best=0.9878)
+Trial 43/50: F1=0.9862 (best=0.9878)
+Trial 44/50: F1=0.9833 (best=0.9878)
+Trial 45/50: F1=0.9864 (best=0.9878)
+Trial 46/50: F1=0.9862 (best=0.9878)
+Trial 47/50: F1=0.9823 (best=0.9878)
+Trial 48/50: F1=0.9850 (best=0.9878)
+Trial 49/50: F1=0.9828 (best=0.9878)
+Trial 50/50: F1=0.9874 (best=0.9878)
 
 ============================================================
 ✓ Optimization complete!
-Total time: 299.73s
+Total time: 43540.97s
 
 [Step 6/6] Saving results...
-✓ Saved to ../outputs/hyperparams/transkal_best_quick.json
+✓ Saved to ../outputs/hyperparams/transkal_best.json
 
 ============================================================
 ✓ TransKal Hyperparameter Tuning Complete!
-Runtime: 5m 17s
-Best F1: 0.9716
+Runtime: 725m 52s
+Best F1: 0.9878
 ============================================================

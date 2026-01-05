@@ -18,3 +18,66 @@
 ============================================================
 
 Running 50 trials...
+Trial 1/50: F1=0.9875 (best=0.9875)
+Trial 2/50: F1=0.9856 (best=0.9875)
+Trial 3/50: F1=0.9731 (best=0.9875)
+Trial 4/50: F1=0.9828 (best=0.9875)
+Trial 5/50: F1=0.9861 (best=0.9875)
+Trial 6/50: F1=0.9835 (best=0.9875)
+Trial 7/50: F1=0.9844 (best=0.9875)
+Trial 8/50: F1=0.9816 (best=0.9875)
+Trial 9/50: F1=0.9780 (best=0.9875)
+Trial 10/50: F1=0.9833 (best=0.9875)
+Trial 11/50: F1=0.9862 (best=0.9875)
+Trial 12/50: F1=0.9835 (best=0.9875)
+Trial 13/50: F1=0.9875 (best=0.9875)
+Trial 14/50: F1=0.9865 (best=0.9875)
+Trial 15/50: F1=0.9840 (best=0.9875)
+Trial 16/50: F1=0.9863 (best=0.9875)
+Trial 17/50: F1=0.9848 (best=0.9875)
+Trial 18/50: F1=0.9822 (best=0.9875)
+Trial 19/50: F1=0.9837 (best=0.9875)
+Trial 20/50: F1=0.9834 (best=0.9875)
+Trial 21/50: F1=0.9803 (best=0.9875)
+Trial 22/50: F1=0.9862 (best=0.9875)
+Trial 23/50: F1=0.9839 (best=0.9875)
+Trial 24/50: F1=0.9860 (best=0.9875)
+Trial 25/50: F1=0.9876 (best=0.9876)
+Trial 26/50: F1=0.9862 (best=0.9876)
+Trial 27/50: F1=0.9847 (best=0.9876)
+Trial 28/50: F1=0.9831 (best=0.9876)
+Trial 29/50: F1=0.9823 (best=0.9876)
+Trial 30/50: F1=0.9879 (best=0.9879)
+Trial 31/50: F1=0.9879 (best=0.9879)
+Trial 32/50: F1=0.9894 (best=0.9894)
+Trial 33/50: F1=0.9896 (best=0.9896)
+Trial 34/50: F1=0.9877 (best=0.9896)
+Trial 35/50: F1=0.9884 (best=0.9896)
+Trial 36/50: F1=0.9844 (best=0.9896)
+Trial 37/50: F1=0.9868 (best=0.9896)
+Trial 38/50: F1=0.9852 (best=0.9896)
+Trial 39/50: F1=0.9864 (best=0.9896)
+Trial 40/50: F1=0.9851 (best=0.9896)
+Trial 41/50: F1=0.9852 (best=0.9896)
+Trial 42/50: F1=0.9882 (best=0.9896)
+Trial 43/50: F1=0.9873 (best=0.9896)
+Trial 44/50: F1=0.9883 (best=0.9896)
+Trial 45/50: F1=0.9883 (best=0.9896)
+Trial 46/50: F1=0.9867 (best=0.9896)
+Trial 47/50: F1=0.9874 (best=0.9896)
+Trial 48/50: F1=0.9850 (best=0.9896)
+Trial 49/50: F1=0.9827 (best=0.9896)
+Trial 50/50: F1=0.9872 (best=0.9896)
+
+============================================================
+✓ Optimization complete!
+Total time: 39642.17s
+
+[Step 6/6] Saving results...
+✓ Saved to ../outputs/hyperparams/lstm_fcn_best.json
+
+============================================================
+✓ LSTM-FCN Hyperparameter Tuning Complete!
+Runtime: 660m 52s
+Best F1: 0.9896
+============================================================
