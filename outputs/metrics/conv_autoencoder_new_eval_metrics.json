@@ -1,0 +1,19 @@
+{
+  "model": "Conv-Autoencoder",
+  "dataset": "new_binary_eval",
+  "task": "binary",
+  "quick_mode": false,
+  "num_samples": 37150,
+  "accuracy": 0.6277254374158816,
+  "precision": 0.6277254374158816,
+  "recall": 1.0,
+  "f1_binary": 0.7712915495286919,
+  "roc_auc": 0.9758831200723314,
+  "threshold": 0.02303786762058735,
+  "comparison_with_original": {
+    "accuracy_delta": -0.3661824279603546,
+    "f1_delta": -0.22514404630773788,
+    "original_accuracy": 0.9939078653762362,
+    "original_f1": 0.9964355958364298
+  }
+}

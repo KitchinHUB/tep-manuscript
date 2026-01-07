@@ -1,0 +1,35 @@
+{
+  "model": "TransKal",
+  "detector_type": "pluggable",
+  "quick_mode": false,
+  "simulation": {
+    "total_hours": 42,
+    "total_samples": 875,
+    "faults_tested": [
+      1,
+      2,
+      4,
+      5,
+      6,
+      7,
+      8,
+      10,
+      11,
+      12,
+      13,
+      14,
+      16,
+      17,
+      18,
+      19,
+      20
+    ]
+  },
+  "overall_metrics": {
+    "accuracy": 0.13257142857142856,
+    "balanced_accuracy": 0.2078864578864579,
+    "f1_weighted": 0.12858802111636244,
+    "f1_macro": 0.11353617162799168,
+    "fault_detection_recall": 1.0
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "model": "LSTM-Autoencoder",
+  "detector_type": "binary_anomaly",
+  "quick_mode": true,
+  "simulation": {
+    "total_hours": 7.0,
+    "total_samples": 151
+  },
+  "metrics": {
+    "accuracy": 0.609271523178808,
+    "precision": 0.4824561403508772,
+    "recall": 1.0,
+    "f1": 0.650887573964497,
+    "auc_roc": 0.6746212121212121
+  },
+  "threshold": 0.7308661937713623
+}

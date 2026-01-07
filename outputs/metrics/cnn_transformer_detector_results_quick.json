@@ -1,0 +1,23 @@
+{
+  "model": "CNN-Transformer",
+  "detector_type": "pluggable",
+  "quick_mode": true,
+  "simulation": {
+    "total_hours": 7.0,
+    "total_samples": 151,
+    "faults_tested": [
+      1,
+      2,
+      5,
+      10,
+      17
+    ]
+  },
+  "overall_metrics": {
+    "accuracy": 0.3509933774834437,
+    "balanced_accuracy": 0.10542929292929293,
+    "f1_weighted": 0.4104354806341561,
+    "f1_macro": 0.09545454545454544,
+    "fault_detection_recall": 0.6909090909090909
+  }
+}

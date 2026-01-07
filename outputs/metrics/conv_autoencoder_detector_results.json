@@ -1,0 +1,17 @@
+{
+  "model": "Conv-Autoencoder",
+  "detector_type": "binary_anomaly",
+  "quick_mode": false,
+  "simulation": {
+    "total_hours": 42,
+    "total_samples": 875
+  },
+  "metrics": {
+    "accuracy": 0.45257142857142857,
+    "precision": 0.4270334928229665,
+    "recall": 1.0,
+    "f1": 0.5984911986588433,
+    "auc_roc": 0.6610103500859804
+  },
+  "threshold": 0.02303786762058735
+}

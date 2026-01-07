@@ -1,0 +1,35 @@
+{
+  "model": "LSTM-FCN",
+  "detector_type": "pluggable",
+  "quick_mode": false,
+  "simulation": {
+    "total_hours": 42,
+    "total_samples": 875,
+    "faults_tested": [
+      1,
+      2,
+      4,
+      5,
+      6,
+      7,
+      8,
+      10,
+      11,
+      12,
+      13,
+      14,
+      16,
+      17,
+      18,
+      19,
+      20
+    ]
+  },
+  "overall_metrics": {
+    "accuracy": 0.3211428571428571,
+    "balanced_accuracy": 0.19512369512369512,
+    "f1_weighted": 0.37093099306936267,
+    "f1_macro": 0.14146484085921504,
+    "fault_detection_recall": 0.8375350140056023
+  }
+}

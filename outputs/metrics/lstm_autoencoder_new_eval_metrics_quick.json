@@ -1,0 +1,19 @@
+{
+  "model": "LSTM-Autoencoder",
+  "dataset": "new_binary_eval_quick",
+  "task": "binary",
+  "quick_mode": true,
+  "num_samples": 396,
+  "accuracy": 0.41919191919191917,
+  "precision": 0.19548872180451127,
+  "recall": 0.7647058823529411,
+  "f1_binary": 0.31137724550898205,
+  "roc_auc": 0.7485204447632713,
+  "threshold": 0.7308661937713623,
+  "comparison_with_original": {
+    "accuracy_delta": -0.5503962595493064,
+    "f1_delta": -0.6705778438247347,
+    "original_accuracy": 0.9695881787412256,
+    "original_f1": 0.9819550893337168
+  }
+}

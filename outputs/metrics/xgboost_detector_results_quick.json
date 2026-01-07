@@ -1,0 +1,98 @@
+{
+  "model": "XGBoost",
+  "detector_type": "pluggable",
+  "quick_mode": true,
+  "simulation": {
+    "total_hours": 7.0,
+    "total_samples": 151,
+    "normal_hours": 2,
+    "fault_on_hours": 0.5,
+    "fault_off_hours": 0.5,
+    "faults_tested": [
+      1,
+      2,
+      5,
+      10,
+      17
+    ],
+    "record_interval_seconds": 180
+  },
+  "overall_metrics": {
+    "accuracy": 0.33112582781456956,
+    "balanced_accuracy": 0.2612058080808081,
+    "f1_weighted": 0.395852430534089,
+    "f1_macro": 0.17736315060582103,
+    "fault_detection_accuracy": 0.5033112582781457,
+    "fault_detection_precision": 0.3979591836734694,
+    "fault_detection_recall": 0.7090909090909091
+  },
+  "per_fault_metrics": [
+    {
+      "fault_class": 0,
+      "samples": 96,
+      "accuracy": 0.3854166666666667,
+      "detection_rate": 0.3854166666666667,
+      "avg_confidence": 0.6319719903791944,
+      "most_confused_with": 8,
+      "confusion_rate": 0.4270833333333333,
+      "detection_latency_steps": NaN,
+      "detection_latency_minutes": NaN
+    },
+    {
+      "fault_class": 1,
+      "samples": 11,
+      "accuracy": 0.2727272727272727,
+      "detection_rate": 0.2727272727272727,
+      "avg_confidence": 0.7421241510998119,
+      "most_confused_with": 8,
+      "confusion_rate": 0.5454545454545454,
+      "detection_latency_steps": 5.0,
+      "detection_latency_minutes": 15.0
+    },
+    {
+      "fault_class": 2,
+      "samples": 11,
+      "accuracy": 0.18181818181818182,
+      "detection_rate": 0.18181818181818182,
+      "avg_confidence": 0.696909939700907,
+      "most_confused_with": 0,
+      "confusion_rate": 0.45454545454545453,
+      "detection_latency_steps": 9.0,
+      "detection_latency_minutes": 27.0
+    },
+    {
+      "fault_class": 5,
+      "samples": 11,
+      "accuracy": 0.7272727272727273,
+      "detection_rate": 0.7272727272727273,
+      "avg_confidence": 0.8509872962128032,
+      "most_confused_with": 12,
+      "confusion_rate": 0.18181818181818182,
+      "detection_latency_steps": 2.0,
+      "detection_latency_minutes": 6.0
+    },
+    {
+      "fault_class": 10,
+      "samples": 11,
+      "accuracy": 0.0,
+      "detection_rate": 0.0,
+      "avg_confidence": 0.66148442029953,
+      "most_confused_with": 8,
+      "confusion_rate": 0.45454545454545453,
+      "detection_latency_steps": NaN,
+      "detection_latency_minutes": NaN
+    },
+    {
+      "fault_class": 17,
+      "samples": 11,
+      "accuracy": 0.0,
+      "detection_rate": 0.0,
+      "avg_confidence": 0.6491055705330588,
+      "most_confused_with": 8,
+      "confusion_rate": 0.45454545454545453,
+      "detection_latency_steps": NaN,
+      "detection_latency_minutes": NaN
+    }
+  ],
+  "average_detection_latency_minutes": 16.0
+}

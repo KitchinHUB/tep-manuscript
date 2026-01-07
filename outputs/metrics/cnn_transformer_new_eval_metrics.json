@@ -1,0 +1,40 @@
+{
+  "model": "CNN-Transformer",
+  "dataset": "new_multiclass_eval",
+  "task": "multiclass",
+  "quick_mode": false,
+  "num_samples": 1866000,
+  "num_classes": 18,
+  "accuracy": 0.9949356913183279,
+  "balanced_accuracy": 0.9954128440366973,
+  "f1_weighted": 0.9949669346424644,
+  "f1_macro": 0.9954411436545985,
+  "precision_weighted": 0.9951733850104822,
+  "recall_weighted": 0.9949356913183279,
+  "per_class_f1": {
+    "0": 0.9598470363288719,
+    "1": 1.0,
+    "2": 1.0,
+    "4": 1.0,
+    "5": 1.0,
+    "6": 1.0,
+    "7": 1.0,
+    "8": 1.0,
+    "10": 0.9934895833333334,
+    "11": 1.0,
+    "12": 1.0,
+    "13": 1.0,
+    "14": 1.0,
+    "16": 1.0,
+    "17": 0.9772117962466488,
+    "18": 1.0,
+    "19": 1.0,
+    "20": 0.9873921698739216
+  },
+  "comparison_with_original": {
+    "accuracy_delta": 0.0029675519190861532,
+    "f1_weighted_delta": 0.002992890842625884,
+    "original_accuracy": 0.9919681393992418,
+    "original_f1_weighted": 0.9919740437998386
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "model": "LSTM",
+  "detector_type": "pluggable",
+  "quick_mode": true,
+  "simulation": {
+    "total_hours": 7.0,
+    "total_samples": 151,
+    "faults_tested": [
+      1,
+      2,
+      5,
+      10,
+      17
+    ]
+  },
+  "overall_metrics": {
+    "accuracy": 0.41721854304635764,
+    "balanced_accuracy": 0.2569444444444444,
+    "f1_weighted": 0.4291286388549614,
+    "f1_macro": 0.14994042102475838,
+    "fault_detection_recall": 0.6727272727272727
+  }
+}
