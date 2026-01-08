@@ -201,8 +201,88 @@ tep-sim-validation: ## Run 05-tep-sim-data-validation.ipynb - Validate TEP-Sim d
 		$(TEP_SIM_VALIDATION_NB)
 	@echo "✓ TEP-Sim data validation complete"
 
-##@ New Data Evaluation (30-series)
+##@ HMM Filters (30-series)
 # Output metrics for 30-series
+HMM_XGBOOST := $(METRICS_DIR)/xgboost_hmm_filter_results.json
+HMM_LSTM := $(METRICS_DIR)/lstm_hmm_filter_results.json
+HMM_LSTMFCN := $(METRICS_DIR)/lstm_fcn_hmm_filter_results.json
+HMM_CNNTRANS := $(METRICS_DIR)/cnn_transformer_hmm_filter_results.json
+HMM_TRANSKAL := $(METRICS_DIR)/transkal_hmm_filter_results.json
+HMM_SUMMARY := $(METRICS_DIR)/hmm_filter_comparison.csv
+
+.PHONY: hmm-filters
+
+hmm-filters: $(HMM_XGBOOST) $(HMM_LSTM) $(HMM_LSTMFCN) $(HMM_CNNTRANS) $(HMM_TRANSKAL) $(HMM_SUMMARY) ## Run all 30-series HMM filter notebooks
+	@echo "✓ All HMM filter evaluations complete"
+
+hmm-xgboost: $(HMM_XGBOOST) ## Run 30-xgboost-hmm-filter.ipynb
+
+$(HMM_XGBOOST): $(NOTEBOOKS_DIR)/30-xgboost-hmm-filter.ipynb $(FINAL_XGBOOST_MODEL) $(MULTICLASS_TEST)
+	@echo "Running XGBoost HMM filter evaluation..."
+	@mkdir -p $(METRICS_DIR)
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/30-xgboost-hmm-filter.ipynb
+	@touch $@
+	@echo "✓ XGBoost HMM filter complete"
+
+hmm-lstm: $(HMM_LSTM) ## Run 31-lstm-hmm-filter.ipynb
+
+$(HMM_LSTM): $(NOTEBOOKS_DIR)/31-lstm-hmm-filter.ipynb $(FINAL_LSTM_MODEL) $(MULTICLASS_TEST)
+	@echo "Running LSTM HMM filter evaluation..."
+	@mkdir -p $(METRICS_DIR)
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/31-lstm-hmm-filter.ipynb
+	@touch $@
+	@echo "✓ LSTM HMM filter complete"
+
+hmm-lstm-fcn: $(HMM_LSTMFCN) ## Run 32-lstm-fcn-hmm-filter.ipynb
+
+$(HMM_LSTMFCN): $(NOTEBOOKS_DIR)/32-lstm-fcn-hmm-filter.ipynb $(FINAL_LSTMFCN_MODEL) $(MULTICLASS_TEST)
+	@echo "Running LSTM-FCN HMM filter evaluation..."
+	@mkdir -p $(METRICS_DIR)
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/32-lstm-fcn-hmm-filter.ipynb
+	@touch $@
+	@echo "✓ LSTM-FCN HMM filter complete"
+
+hmm-cnn-transformer: $(HMM_CNNTRANS) ## Run 33-cnn-transformer-hmm-filter.ipynb
+
+$(HMM_CNNTRANS): $(NOTEBOOKS_DIR)/33-cnn-transformer-hmm-filter.ipynb $(FINAL_CNNTRANS_MODEL) $(MULTICLASS_TEST)
+	@echo "Running CNN-Transformer HMM filter evaluation..."
+	@mkdir -p $(METRICS_DIR)
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/33-cnn-transformer-hmm-filter.ipynb
+	@touch $@
+	@echo "✓ CNN-Transformer HMM filter complete"
+
+hmm-transkal: $(HMM_TRANSKAL) ## Run 34-transkal-hmm-filter.ipynb
+
+$(HMM_TRANSKAL): $(NOTEBOOKS_DIR)/34-transkal-hmm-filter.ipynb $(FINAL_TRANSKAL_MODEL) $(MULTICLASS_TEST)
+	@echo "Running TransKal HMM filter evaluation..."
+	@mkdir -p $(METRICS_DIR)
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/34-transkal-hmm-filter.ipynb
+	@touch $@
+	@echo "✓ TransKal HMM filter complete"
+
+hmm-summary: $(HMM_SUMMARY) ## Run 37-hmm-filter-comparison-summary.ipynb
+
+$(HMM_SUMMARY): $(NOTEBOOKS_DIR)/37-hmm-filter-comparison-summary.ipynb $(HMM_XGBOOST) $(HMM_LSTM) $(HMM_LSTMFCN) $(HMM_CNNTRANS) $(HMM_TRANSKAL)
+	@echo "Running HMM filter comparison summary..."
+	@mkdir -p $(METRICS_DIR)
+	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
+		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
+		$(NOTEBOOKS_DIR)/37-hmm-filter-comparison-summary.ipynb
+	@touch $@
+	@echo "✓ HMM filter comparison summary complete"
+
+##@ New Data Evaluation (40-series)
+# Output metrics for 40-series
 NEW_EVAL_XGBOOST := $(METRICS_DIR)/xgboost_new_eval_metrics$(MODE_SUFFIX).json
 NEW_EVAL_LSTM := $(METRICS_DIR)/lstm_new_eval_metrics$(MODE_SUFFIX).json
 NEW_EVAL_LSTMFCN := $(METRICS_DIR)/lstm_fcn_new_eval_metrics$(MODE_SUFFIX).json
@@ -214,176 +294,96 @@ NEW_EVAL_SUMMARY := $(METRICS_DIR)/multiclass_comparison_new_eval$(MODE_SUFFIX).
 
 .PHONY: new-eval
 
-new-eval: $(NEW_EVAL_XGBOOST) $(NEW_EVAL_LSTM) $(NEW_EVAL_LSTMFCN) $(NEW_EVAL_CNNTRANS) $(NEW_EVAL_TRANSKAL) $(NEW_EVAL_LSTMAE) $(NEW_EVAL_CONVAE) $(NEW_EVAL_SUMMARY) ## Run all 30-series new data evaluation notebooks
+new-eval: $(NEW_EVAL_XGBOOST) $(NEW_EVAL_LSTM) $(NEW_EVAL_LSTMFCN) $(NEW_EVAL_CNNTRANS) $(NEW_EVAL_TRANSKAL) $(NEW_EVAL_LSTMAE) $(NEW_EVAL_CONVAE) $(NEW_EVAL_SUMMARY) ## Run all 40-series new data evaluation notebooks
 	@echo "✓ All new data evaluations complete"
 
-new-eval-xgboost: $(NEW_EVAL_XGBOOST) ## Run 30-xgboost-new-data-evaluation.ipynb
+new-eval-xgboost: $(NEW_EVAL_XGBOOST) ## Run 40-xgboost-new-data-evaluation.ipynb
 
-$(NEW_EVAL_XGBOOST): $(NOTEBOOKS_DIR)/30-xgboost-new-data-evaluation.ipynb $(NEW_MULTICLASS_EVAL) $(FINAL_XGBOOST_MODEL)
+$(NEW_EVAL_XGBOOST): $(NOTEBOOKS_DIR)/40-xgboost-new-data-evaluation.ipynb $(NEW_MULTICLASS_EVAL) $(FINAL_XGBOOST_MODEL)
 	@echo "Running XGBoost new data evaluation..."
 	@mkdir -p $(METRICS_DIR)
 	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
 		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/30-xgboost-new-data-evaluation.ipynb
+		$(NOTEBOOKS_DIR)/40-xgboost-new-data-evaluation.ipynb
 	@touch $@
 	@echo "✓ XGBoost new data evaluation complete"
 
-new-eval-lstm: $(NEW_EVAL_LSTM) ## Run 31-lstm-new-data-evaluation.ipynb
+new-eval-lstm: $(NEW_EVAL_LSTM) ## Run 41-lstm-new-data-evaluation.ipynb
 
-$(NEW_EVAL_LSTM): $(NOTEBOOKS_DIR)/31-lstm-new-data-evaluation.ipynb $(NEW_MULTICLASS_EVAL) $(FINAL_LSTM_MODEL)
+$(NEW_EVAL_LSTM): $(NOTEBOOKS_DIR)/41-lstm-new-data-evaluation.ipynb $(NEW_MULTICLASS_EVAL) $(FINAL_LSTM_MODEL)
 	@echo "Running LSTM new data evaluation..."
 	@mkdir -p $(METRICS_DIR)
 	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
 		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/31-lstm-new-data-evaluation.ipynb
+		$(NOTEBOOKS_DIR)/41-lstm-new-data-evaluation.ipynb
 	@touch $@
 	@echo "✓ LSTM new data evaluation complete"
 
-new-eval-lstm-fcn: $(NEW_EVAL_LSTMFCN) ## Run 32-lstm-fcn-new-data-evaluation.ipynb
+new-eval-lstm-fcn: $(NEW_EVAL_LSTMFCN) ## Run 42-lstm-fcn-new-data-evaluation.ipynb
 
-$(NEW_EVAL_LSTMFCN): $(NOTEBOOKS_DIR)/32-lstm-fcn-new-data-evaluation.ipynb $(NEW_MULTICLASS_EVAL) $(FINAL_LSTMFCN_MODEL)
+$(NEW_EVAL_LSTMFCN): $(NOTEBOOKS_DIR)/42-lstm-fcn-new-data-evaluation.ipynb $(NEW_MULTICLASS_EVAL) $(FINAL_LSTMFCN_MODEL)
 	@echo "Running LSTM-FCN new data evaluation..."
 	@mkdir -p $(METRICS_DIR)
 	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
 		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/32-lstm-fcn-new-data-evaluation.ipynb
+		$(NOTEBOOKS_DIR)/42-lstm-fcn-new-data-evaluation.ipynb
 	@touch $@
 	@echo "✓ LSTM-FCN new data evaluation complete"
 
-new-eval-cnn-transformer: $(NEW_EVAL_CNNTRANS) ## Run 33-cnn-transformer-new-data-evaluation.ipynb
+new-eval-cnn-transformer: $(NEW_EVAL_CNNTRANS) ## Run 43-cnn-transformer-new-data-evaluation.ipynb
 
-$(NEW_EVAL_CNNTRANS): $(NOTEBOOKS_DIR)/33-cnn-transformer-new-data-evaluation.ipynb $(NEW_MULTICLASS_EVAL) $(FINAL_CNNTRANS_MODEL)
+$(NEW_EVAL_CNNTRANS): $(NOTEBOOKS_DIR)/43-cnn-transformer-new-data-evaluation.ipynb $(NEW_MULTICLASS_EVAL) $(FINAL_CNNTRANS_MODEL)
 	@echo "Running CNN-Transformer new data evaluation..."
 	@mkdir -p $(METRICS_DIR)
 	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
 		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/33-cnn-transformer-new-data-evaluation.ipynb
+		$(NOTEBOOKS_DIR)/43-cnn-transformer-new-data-evaluation.ipynb
 	@touch $@
 	@echo "✓ CNN-Transformer new data evaluation complete"
 
-new-eval-transkal: $(NEW_EVAL_TRANSKAL) ## Run 34-transkal-new-data-evaluation.ipynb
+new-eval-transkal: $(NEW_EVAL_TRANSKAL) ## Run 44-transkal-new-data-evaluation.ipynb
 
-$(NEW_EVAL_TRANSKAL): $(NOTEBOOKS_DIR)/34-transkal-new-data-evaluation.ipynb $(NEW_MULTICLASS_EVAL) $(FINAL_TRANSKAL_MODEL)
+$(NEW_EVAL_TRANSKAL): $(NOTEBOOKS_DIR)/44-transkal-new-data-evaluation.ipynb $(NEW_MULTICLASS_EVAL) $(FINAL_TRANSKAL_MODEL)
 	@echo "Running TransKal new data evaluation..."
 	@mkdir -p $(METRICS_DIR)
 	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
 		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/34-transkal-new-data-evaluation.ipynb
+		$(NOTEBOOKS_DIR)/44-transkal-new-data-evaluation.ipynb
 	@touch $@
 	@echo "✓ TransKal new data evaluation complete"
 
-new-eval-lstm-ae: $(NEW_EVAL_LSTMAE) ## Run 35-lstm-autoencoder-new-data-evaluation.ipynb
+new-eval-lstm-ae: $(NEW_EVAL_LSTMAE) ## Run 45-lstm-autoencoder-new-data-evaluation.ipynb
 
-$(NEW_EVAL_LSTMAE): $(NOTEBOOKS_DIR)/35-lstm-autoencoder-new-data-evaluation.ipynb $(NEW_BINARY_EVAL) $(FINAL_LSTMAE_MODEL)
+$(NEW_EVAL_LSTMAE): $(NOTEBOOKS_DIR)/45-lstm-autoencoder-new-data-evaluation.ipynb $(NEW_BINARY_EVAL) $(FINAL_LSTMAE_MODEL)
 	@echo "Running LSTM-Autoencoder new data evaluation..."
 	@mkdir -p $(METRICS_DIR)
 	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
 		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/35-lstm-autoencoder-new-data-evaluation.ipynb
+		$(NOTEBOOKS_DIR)/45-lstm-autoencoder-new-data-evaluation.ipynb
 	@touch $@
 	@echo "✓ LSTM-Autoencoder new data evaluation complete"
 
-new-eval-conv-ae: $(NEW_EVAL_CONVAE) ## Run 36-conv-autoencoder-new-data-evaluation.ipynb
+new-eval-conv-ae: $(NEW_EVAL_CONVAE) ## Run 46-conv-autoencoder-new-data-evaluation.ipynb
 
-$(NEW_EVAL_CONVAE): $(NOTEBOOKS_DIR)/36-conv-autoencoder-new-data-evaluation.ipynb $(NEW_BINARY_EVAL) $(FINAL_CONVAE_MODEL)
+$(NEW_EVAL_CONVAE): $(NOTEBOOKS_DIR)/46-conv-autoencoder-new-data-evaluation.ipynb $(NEW_BINARY_EVAL) $(FINAL_CONVAE_MODEL)
 	@echo "Running Conv-Autoencoder new data evaluation..."
 	@mkdir -p $(METRICS_DIR)
 	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
 		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/36-conv-autoencoder-new-data-evaluation.ipynb
+		$(NOTEBOOKS_DIR)/46-conv-autoencoder-new-data-evaluation.ipynb
 	@touch $@
 	@echo "✓ Conv-Autoencoder new data evaluation complete"
 
-new-eval-summary: $(NEW_EVAL_SUMMARY) ## Run 37-model-comparison-new-data.ipynb
+new-eval-summary: $(NEW_EVAL_SUMMARY) ## Run 47-model-comparison-new-data.ipynb
 
-$(NEW_EVAL_SUMMARY): $(NOTEBOOKS_DIR)/37-model-comparison-new-data.ipynb $(NEW_EVAL_XGBOOST) $(NEW_EVAL_LSTM) $(NEW_EVAL_LSTMFCN) $(NEW_EVAL_CNNTRANS) $(NEW_EVAL_TRANSKAL) $(NEW_EVAL_LSTMAE) $(NEW_EVAL_CONVAE)
+$(NEW_EVAL_SUMMARY): $(NOTEBOOKS_DIR)/47-model-comparison-new-data.ipynb $(NEW_EVAL_XGBOOST) $(NEW_EVAL_LSTM) $(NEW_EVAL_LSTMFCN) $(NEW_EVAL_CNNTRANS) $(NEW_EVAL_TRANSKAL) $(NEW_EVAL_LSTMAE) $(NEW_EVAL_CONVAE)
 	@echo "Running new data model comparison summary..."
 	@mkdir -p $(METRICS_DIR)
 	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
 		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/37-model-comparison-new-data.ipynb
+		$(NOTEBOOKS_DIR)/47-model-comparison-new-data.ipynb
 	@touch $@
 	@echo "✓ New data model comparison summary complete"
-
-##@ HMM Filters (40-series)
-# Output metrics for 40-series
-HMM_XGBOOST := $(METRICS_DIR)/xgboost_hmm_filter_results.json
-HMM_LSTM := $(METRICS_DIR)/lstm_hmm_filter_results.json
-HMM_LSTMFCN := $(METRICS_DIR)/lstm_fcn_hmm_filter_results.json
-HMM_CNNTRANS := $(METRICS_DIR)/cnn_transformer_hmm_filter_results.json
-HMM_TRANSKAL := $(METRICS_DIR)/transkal_hmm_filter_results.json
-HMM_SUMMARY := $(METRICS_DIR)/hmm_filter_comparison.csv
-
-.PHONY: hmm-filters
-
-hmm-filters: $(HMM_XGBOOST) $(HMM_LSTM) $(HMM_LSTMFCN) $(HMM_CNNTRANS) $(HMM_TRANSKAL) $(HMM_SUMMARY) ## Run all 40-series HMM filter notebooks
-	@echo "✓ All HMM filter evaluations complete"
-
-hmm-xgboost: $(HMM_XGBOOST) ## Run 40-xgboost-hmm-filter.ipynb
-
-$(HMM_XGBOOST): $(NOTEBOOKS_DIR)/40-xgboost-hmm-filter.ipynb $(FINAL_XGBOOST_MODEL) $(MULTICLASS_TEST)
-	@echo "Running XGBoost HMM filter evaluation..."
-	@mkdir -p $(METRICS_DIR)
-	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
-		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/40-xgboost-hmm-filter.ipynb
-	@touch $@
-	@echo "✓ XGBoost HMM filter complete"
-
-hmm-lstm: $(HMM_LSTM) ## Run 41-lstm-hmm-filter.ipynb
-
-$(HMM_LSTM): $(NOTEBOOKS_DIR)/41-lstm-hmm-filter.ipynb $(FINAL_LSTM_MODEL) $(MULTICLASS_TEST)
-	@echo "Running LSTM HMM filter evaluation..."
-	@mkdir -p $(METRICS_DIR)
-	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
-		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/41-lstm-hmm-filter.ipynb
-	@touch $@
-	@echo "✓ LSTM HMM filter complete"
-
-hmm-lstm-fcn: $(HMM_LSTMFCN) ## Run 42-lstm-fcn-hmm-filter.ipynb
-
-$(HMM_LSTMFCN): $(NOTEBOOKS_DIR)/42-lstm-fcn-hmm-filter.ipynb $(FINAL_LSTMFCN_MODEL) $(MULTICLASS_TEST)
-	@echo "Running LSTM-FCN HMM filter evaluation..."
-	@mkdir -p $(METRICS_DIR)
-	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
-		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/42-lstm-fcn-hmm-filter.ipynb
-	@touch $@
-	@echo "✓ LSTM-FCN HMM filter complete"
-
-hmm-cnn-transformer: $(HMM_CNNTRANS) ## Run 43-cnn-transformer-hmm-filter.ipynb
-
-$(HMM_CNNTRANS): $(NOTEBOOKS_DIR)/43-cnn-transformer-hmm-filter.ipynb $(FINAL_CNNTRANS_MODEL) $(MULTICLASS_TEST)
-	@echo "Running CNN-Transformer HMM filter evaluation..."
-	@mkdir -p $(METRICS_DIR)
-	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
-		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/43-cnn-transformer-hmm-filter.ipynb
-	@touch $@
-	@echo "✓ CNN-Transformer HMM filter complete"
-
-hmm-transkal: $(HMM_TRANSKAL) ## Run 44-transkal-hmm-filter.ipynb
-
-$(HMM_TRANSKAL): $(NOTEBOOKS_DIR)/44-transkal-hmm-filter.ipynb $(FINAL_TRANSKAL_MODEL) $(MULTICLASS_TEST)
-	@echo "Running TransKal HMM filter evaluation..."
-	@mkdir -p $(METRICS_DIR)
-	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
-		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/44-transkal-hmm-filter.ipynb
-	@touch $@
-	@echo "✓ TransKal HMM filter complete"
-
-hmm-summary: $(HMM_SUMMARY) ## Run 47-hmm-filter-comparison-summary.ipynb
-
-$(HMM_SUMMARY): $(NOTEBOOKS_DIR)/47-hmm-filter-comparison-summary.ipynb $(HMM_XGBOOST) $(HMM_LSTM) $(HMM_LSTMFCN) $(HMM_CNNTRANS) $(HMM_TRANSKAL)
-	@echo "Running HMM filter comparison summary..."
-	@mkdir -p $(METRICS_DIR)
-	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
-		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/47-hmm-filter-comparison-summary.ipynb
-	@touch $@
-	@echo "✓ HMM filter comparison summary complete"
 
 ##@ Hyperparameter Tuning (10-series)
 hyperparams: hyperparam-xgboost hyperparam-lstm hyperparam-lstm-fcn hyperparam-cnn-transformer hyperparam-transkal hyperparam-lstm-ae hyperparam-conv-ae hyperparam-summary ## Run all hyperparameter tuning notebooks
