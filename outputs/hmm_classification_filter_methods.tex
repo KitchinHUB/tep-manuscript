@@ -1,0 +1,62 @@
+\subsection{Hidden Markov Model Classification Filter}
+\label{sec:hmm-filter}
+
+To improve the temporal consistency of fault classification predictions, we employ a Hidden Markov Model (HMM)-based classification filter that exploits the inherent temporal structure in process data. The key insight is that fault states in industrial processes exhibit temporal persistence---if the process is in a particular fault state at time $t$, it is highly likely to remain in that state at time $t+1$.
+
+\subsubsection{Model Formulation}
+
+We formulate the classification filter as an HMM with the following components:
+
+\paragraph{State Space.} The hidden state space corresponds to the true fault class $s_t \in \{0, 1, 2, \ldots, K\}$, where $s_t = 0$ represents normal operation and $s_t = k$ for $k > 0$ represents fault type $k$. For the Tennessee Eastman Process, $K = 17$ (excluding faults 3, 9, and 15 which are known to be undetectable).
+
+\paragraph{Observation Model (Emission Probabilities).} The observations $o_t$ are the classifier predictions at each time step. The emission probability $P(o_t = j \mid s_t = i)$ represents the probability that the classifier predicts class $j$ given the true class is $i$. This is directly estimated from the classifier's confusion matrix on the validation set:
+\begin{equation}
+    B_{ij} = P(o_t = j \mid s_t = i) = \frac{C_{ij}}{\sum_{k=0}^{K} C_{ik}}
+\end{equation}
+where $C_{ij}$ is the count of samples with true class $i$ classified as class $j$, and $B$ is the $K \times K$ emission matrix. This formulation captures the asymmetric error patterns typical of classifiers, where misclassification probabilities are generally not symmetric ($P(i \to j) \neq P(j \to i)$).
+
+\paragraph{Transition Model.} The transition probability $P(s_{t+1} = j \mid s_t = i)$ models the dynamics of state changes. We use a ``sticky'' transition model parameterized by a stickiness parameter $\gamma \in [0, 1]$:
+\begin{equation}
+    A_{ij} = P(s_{t+1} = j \mid s_t = i) =
+    \begin{cases}
+        \gamma & \text{if } i = j \\
+        \frac{1 - \gamma}{K} & \text{if } i \neq j
+    \end{cases}
+\end{equation}
+where $A$ is the $K \times K$ transition matrix. Higher values of $\gamma$ enforce stronger temporal consistency, making the filter more resistant to noise but slower to respond to actual state changes.
+
+\subsubsection{Inference Algorithm}
+
+Given a sequence of classifier predictions $\{o_1, o_2, \ldots, o_T\}$, we perform online Bayesian filtering to estimate the posterior probability over fault states. The algorithm maintains a belief state $\mathbf{b}_t = [P(s_t = 0), P(s_t = 1), \ldots, P(s_t = K)]^T$ representing the current probability distribution over fault classes.
+
+\paragraph{Prediction Step.} Propagate the belief through the transition model:
+\begin{equation}
+    \bar{\mathbf{b}}_t = A^T \mathbf{b}_{t-1}
+\end{equation}
+
+\paragraph{Update Step.} Incorporate the new observation using Bayes' rule:
+\begin{equation}
+    \mathbf{b}_t = \frac{\bar{\mathbf{b}}_t \odot \mathbf{e}_{o_t}}{\mathbf{1}^T (\bar{\mathbf{b}}_t \odot \mathbf{e}_{o_t})}
+\end{equation}
+where $\mathbf{e}_{o_t} = [B_{0,o_t}, B_{1,o_t}, \ldots, B_{K,o_t}]^T$ is the likelihood vector for the observed prediction, $\odot$ denotes element-wise multiplication, and the denominator provides normalization.
+
+\paragraph{Output.} The filtered classification is the maximum a posteriori (MAP) estimate:
+\begin{equation}
+    \hat{s}_t = \arg\max_k b_t^{(k)}
+\end{equation}
+
+\subsubsection{Implementation Details}
+
+The filter is initialized with a uniform prior $\mathbf{b}_0 = \mathbf{1}/(K+1)$ and processes predictions sequentially. The emission matrix $B$ is estimated from the normalized confusion matrix computed on the validation set during model training. The stickiness parameter $\gamma$ is a hyperparameter that can be tuned; we evaluate values in $\{0.7, 0.85, 0.95\}$ to assess the trade-off between noise rejection and responsiveness.
+
+\subsubsection{Expected Benefits}
+
+The HMM filter provides several advantages:
+\begin{enumerate}
+    \item \textbf{Temporal Smoothing}: Reduces spurious classification changes by exploiting temporal consistency.
+    \item \textbf{Confidence Calibration}: Incorporates knowledge of the classifier's confusion patterns to weight evidence appropriately.
+    \item \textbf{Asymmetric Error Handling}: Accounts for asymmetric misclassification rates where some faults are systematically confused with others.
+    \item \textbf{Online Operation}: Processes predictions sequentially with constant memory, suitable for real-time deployment.
+\end{enumerate}
+
+The filter is particularly effective when the base classifier exhibits moderate error rates (70--90\% accuracy), where temporal smoothing can significantly improve performance without introducing excessive detection delays.
