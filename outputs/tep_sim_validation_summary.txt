@@ -8,7 +8,7 @@ Original Train: (864000, 57)
 Original Val:   (432000, 57)
 Original Test:  (2880000, 57)
   - Test faulty (fte): (2720000, 57) (samples 161-960)
-TEP-Sim Eval:   (1968600, 57) (samples 161-961)
+TEP-Sim Eval:   (1978215, 57) (samples 161-961)
 
 NOTE: TEP-Sim data structure matches Original Test faulty (fte) data.
 All distributional comparisons use fte as the reference.
@@ -21,19 +21,19 @@ Status: PASS
 
 DISTRIBUTIONAL SIMILARITY (vs Test fte):
 ----------------------------------------------------------------------
-Mean KS statistic: 0.0729
-Features with KS < 0.1: 43/52
+Mean KS statistic: 0.0634
+Features with KS < 0.1: 52/52
 Status: PASS
 
 FAULT-SPECIFIC DISTRIBUTIONS (vs Test fte):
 ----------------------------------------------------------------------
 Similar faults (KS < 0.15): 15/17
-Mean KS across faults: 0.1338
+Mean KS across faults: 0.1088
 Status: PASS
 
 TRAJECTORY CENTROID SIMILARITY (vs Test fte):
 ----------------------------------------------------------------------
-Mean centroid distance: 2.74
+Mean centroid distance: 1.81
 Status: PASS
 
 ======================================================================

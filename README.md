@@ -9,13 +9,26 @@ tep-manuscript/
 ├── notebooks/          # Jupyter notebooks for data processing and analysis
 │   ├── 00-system.ipynb                    # System specifications
 │   ├── 01-create-datasets.ipynb           # Dataset creation
-│   └── 02-exploratory-data-analysis.ipynb # Data validation
+│   ├── 02-exploratory-data-analysis.ipynb # Data validation
+│   ├── 1x-*.ipynb                         # Hyperparameter tuning notebooks
+│   ├── 2x-*.ipynb                         # Final model training notebooks
+│   ├── 3x-*.ipynb                         # HMM filter post-processing notebooks
+│   ├── 4x-*.ipynb                         # New TEP-Sim data evaluation notebooks
+│   └── src/                               # Shared Python modules
 ├── data/              # Generated datasets (not tracked in git)
 ├── outputs/           # Analysis outputs (not tracked in git)
+│   ├── models/        # Trained model checkpoints
+│   ├── metrics/       # JSON metrics files
+│   ├── figures/       # Generated plots
+│   └── hyperparams/   # Best hyperparameters from tuning
 ├── figures/           # Generated figures (not tracked in git)
 ├── manuscript/        # LaTeX manuscript and figures
-├── Dataset/           # Raw data files (.RData)
-├── v1/                # Original model notebooks
+├── Dataset/           # Raw data files (.RData from Harvard Dataverse)
+├── v1/                # Original model notebooks (reference implementations)
+├── archive/           # Deprecated notebooks (50-series detector experiments)
+├── future-work/       # Research proposals for future papers
+│   ├── class-wise-autoencoder-ensemble.md
+│   └── hierarchical-moe-open-set-recognition.md
 ├── pyproject.toml     # Python dependencies
 ├── Makefile           # Build automation
 └── README.md          # This file
@@ -109,15 +122,51 @@ The `01-create-datasets.ipynb` notebook generates balanced train/val/test splits
 
 ## Models
 
-See `v1/` directory for original model implementations:
+### Supervised Multi-class Classifiers
 
-1. **XGBoost** - Classical ML baseline (94.40% accuracy)
-2. **LSTM** - Recurrent neural network (98.74% accuracy)
-3. **LSTM-FCN** - Hybrid LSTM + CNN (99.14% accuracy)
-4. **CNN + Transformer** - Hybrid architecture (99.11% accuracy)
-5. **TransKal** - Transformer + Kalman filter (99.37% accuracy) ⭐ Best
-6. **LSTM Autoencoder** - Semi-supervised (97.65% accuracy)
-7. **Convolutional Autoencoder** - Semi-supervised (98.27% accuracy)
+| Model | Test Accuracy | F1 (weighted) | Key Strength |
+|-------|---------------|---------------|--------------|
+| **XGBoost** | 93.91% | 0.9416 | Fast, interpretable |
+| **LSTM** | 99.14% | 0.9914 | Temporal patterns |
+| **LSTM-FCN** | 99.37% | 0.9937 | Best overall ⭐ |
+| **CNN-Transformer** | 99.20% | 0.9920 | Attention mechanism |
+| **TransKal** | 99.09% | 0.9909 | Kalman smoothing |
+
+### Semi-supervised Anomaly Detection
+
+| Model | Test Accuracy | Notes |
+|-------|---------------|-------|
+| **LSTM Autoencoder** | Binary only | Reconstruction-based |
+| **Conv Autoencoder** | Binary only | Reconstruction-based |
+
+### Post-processing (HMM Filter)
+
+The 30-series notebooks apply Hidden Markov Model filtering to smooth predictions:
+- XGBoost: 93.91% → 95.90% (+2.0% with HMM)
+- Neural networks: <0.1% improvement (already smooth predictions)
+
+## Future Work
+
+Research proposals for follow-up papers are documented in `future-work/`:
+
+### 1. Class-wise Autoencoder Ensemble
+**File**: `future-work/class-wise-autoencoder-ensemble.md`
+
+Train one autoencoder per fault class (18 total). At inference, the class whose AE achieves the lowest reconstruction error is predicted. Key benefits:
+- Softmax over reconstruction errors provides uncertainty quantification
+- May generalize better to distribution shift (learns dynamics, not boundaries)
+- Interpretable: which faults have similar reconstruction patterns?
+
+### 2. Hierarchical Mixture of Experts with Open-Set Recognition
+**File**: `future-work/hierarchical-moe-open-set-recognition.md`
+
+Combine multiple pre-trained models (XGBoost, LSTM, CNN-Transformer) with:
+- Learned gating network to weight experts per input
+- Novelty detection for unknown fault classes (3, 9, 15)
+- Hierarchical structure for coarse-to-fine classification
+- Uncertainty quantification via entropy and expert disagreement
+
+**Key Discovery**: Faults 3, 9, 15 ARE available in the original Harvard Dataverse data. They were explicitly excluded in dataset creation but can be included for open-set evaluation.
 
 ## Development Workflow
 
