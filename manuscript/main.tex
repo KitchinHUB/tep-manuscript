@@ -79,32 +79,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \setcounter{secnumdepth}{-1}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Place any additional macros here.  Please use \newcommand* where
-%% possible, and avoid layout-changing macros (which are not used
-%% when typesetting).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand*\mycommand[1]{\texttt{\emph{#1}}}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Author and title data:
-%% the authblk package is currently the simplest way to provide this
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage{authblk}
-\author[1]{Naixin Lyu}
-\author[1]{Suraj Botcha}
-\author[1]{Eesha Kulkarni}
-\author[1]{Shreya Pagaria}
-\author[1]{Victor Alves}
-\author[1]{Ethan M. Sunshine}
-\author[1]{John R. Kitchin*}
-
-\affil[1]{Department of Chemical Engineering, Carnegie Mellon University, Pittsburgh, PA}
-
-\title{Benchmarking Machine Learning Anomaly Detection Methods on the Tennessee Eastman Process Dataset}
-% Use the \date command for email address(s) of corresponding authors
-\date{*Email: jkitchin@andrew.cmu.edu}
-
 \usepackage{hyperref}
 \hypersetup{
     colorlinks=true,
@@ -115,7 +89,26 @@
 }
 \usepackage{booktabs}
 
+\title{Benchmarking Machine Learning Anomaly Detection Methods on the Tennessee Eastman Process Dataset}
+
+\author{Naixin Lyu}
+\author{Suraj Botcha}
+\author{Eesha Kulkarni}
+\author{Shreya Pagaria}
+\author{Victor Alves}
+\author{Ethan M. Sunshine}
+\author{John R. Kitchin}
+
+\affiliation{%
+Department of Chemical Engineering,
+Carnegie Mellon University,
+Pittsburgh, Pennsylvania 15213, United States
+}
+
+\email{jkitchin@andrew.cmu.edu}
+
 \begin{document}
+
 
 \maketitle
 
