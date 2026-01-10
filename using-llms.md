@@ -13,7 +13,21 @@ This project benchmarks 7 machine learning models for fault detection and diagno
 - Validation on independently generated simulation data
 - Manuscript preparation in LaTeX
 
+### Background: A Year of Prior Work
+
+This repository represents a **redo** of work that originally took four people approximately one year to complete manually. The original notebooks, model implementations, and analysis are preserved in the `v1/` folder for reference.
+
+After completing the initial work and drafting a manuscript, we identified several concerns:
+
+1. **Dataset imbalance** - The original datasets had a 16:1 class imbalance (normal vs. fault classes), which could bias model training and evaluation
+2. **Consistency issues** - With multiple contributors working on different models over many months, notebook structures and evaluation procedures varied
+3. **Reproducibility gaps** - Ad-hoc development made it difficult to reproduce results or systematically compare models
+
+Rather than patch the existing work, we decided to redo the entire analysis from scratch using Claude Code. This time we had the benefit of **20/20 hindsight**: we knew exactly what models to implement, what the dataset issues were, and what evaluation pipeline we needed. Claude Code allowed us to execute this clear plan rapidly and consistently.
+
 ## Scope of Collaboration
+
+**Timeline:** This entire repository was created in **7 days** (January 3-10, 2026), rebuilding what originally took four people approximately one year.
 
 **By the numbers:**
 - 39 total commits in the repository
