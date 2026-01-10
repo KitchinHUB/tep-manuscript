@@ -83,3 +83,10 @@ var/
 venv.bak/
 venv/
 wheels/
+
+# LaTeX build artifacts
+manuscript/main.aux
+manuscript/main.bbl
+manuscript/main.blg
+manuscript/main.out
+manuscript/acs-main.bib
