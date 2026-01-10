@@ -57,3 +57,7 @@ parts:
       - file: notebooks/45-lstm-autoencoder-new-data-evaluation
       - file: notebooks/46-conv-autoencoder-new-data-evaluation
       - file: notebooks/47-model-comparison-new-data
+
+  - caption: Supplementary
+    chapters:
+      - file: using-llms
