@@ -7,14 +7,11 @@ This repository contains the code and analysis for benchmarking machine learning
 ```
 tep-manuscript/
 ├── notebooks/          # Jupyter notebooks for data processing and analysis
-│   ├── 00-system.ipynb                    # System specifications
-│   ├── 01-create-datasets.ipynb           # Dataset creation
-│   ├── 02-exploratory-data-analysis.ipynb # Data validation
-│   ├── 1x-*.ipynb                         # Hyperparameter tuning notebooks
-│   ├── 2x-*.ipynb                         # Final model training notebooks
-│   ├── 3x-*.ipynb                         # HMM filter post-processing notebooks
-│   ├── 4x-*.ipynb                         # New TEP-Sim data evaluation notebooks
-│   └── src/                               # Shared Python modules
+│   ├── 0x-*.ipynb     # Setup: system specs, dataset creation, EDA, TEP-Sim generation
+│   ├── 1x-*.ipynb     # Hyperparameter tuning notebooks
+│   ├── 2x-*.ipynb     # Final model training notebooks
+│   ├── 3x-*.ipynb     # HMM filter post-processing notebooks
+│   └── 4x-*.ipynb     # New TEP-Sim data evaluation notebooks
 ├── data/              # Generated datasets (not tracked in git)
 ├── outputs/           # Analysis outputs (not tracked in git)
 │   ├── models/        # Trained model checkpoints
@@ -23,12 +20,8 @@ tep-manuscript/
 │   └── hyperparams/   # Best hyperparameters from tuning
 ├── figures/           # Generated figures (not tracked in git)
 ├── manuscript/        # LaTeX manuscript and figures
-├── Dataset/           # Raw data files (.RData from Harvard Dataverse)
+├── Dataset/           # Raw data files (not tracked in git, download from Harvard Dataverse)
 ├── v1/                # Original model notebooks (reference implementations)
-├── archive/           # Deprecated notebooks (50-series detector experiments)
-├── future-work/       # Research proposals for future papers
-│   ├── class-wise-autoencoder-ensemble.md
-│   └── hierarchical-moe-open-set-recognition.md
 ├── pyproject.toml     # Python dependencies
 ├── Makefile           # Build automation
 └── README.md          # This file
@@ -89,7 +82,7 @@ make check             # Verify all outputs exist
 The raw data comes from Rieth et al. (2017):
 > Rieth, C. A., Amsel, B. D., Tran, R., & Cook, M. B. (2017). Additional Tennessee Eastman Process Simulation Data for Anomaly Detection Evaluation. Harvard Dataverse.
 
-Located in `Dataset/`:
+**Note:** Raw data files are not included in this repository due to their size (~1.3 GB). Download them from [Harvard Dataverse](https://doi.org/10.7910/DVN/6C3JR1) and place in the `Dataset/` directory:
 - `TEP_FaultFree_Training.RData.zip` - 500 fault-free training runs
 - `TEP_Faulty_Training.RData.zip` - 500 faulty training runs
 - `TEP_FaultFree_Testing.RData.zip` - 500 fault-free test runs
@@ -97,17 +90,17 @@ Located in `Dataset/`:
 
 ### Generated Datasets
 
-The `01-create-datasets.ipynb` notebook generates balanced train/val/test splits:
+The `01-create-datasets.ipynb` notebook generates balanced train/val/test splits in `data/`:
 
 **Supervised Learning (Multiclass):**
-- `supervised_train.csv` - 320 normal + 340 faulty runs (20 per fault)
-- `supervised_val.csv` - 160 normal + 170 faulty runs (10 per fault)
-- `supervised_test.csv` - 240 normal + 255 faulty runs (15 per fault)
+- `multiclass_train.csv` - 320 normal + 340 faulty runs (20 per fault)
+- `multiclass_val.csv` - 160 normal + 170 faulty runs (10 per fault)
+- `multiclass_test.csv` - 240 normal + 255 faulty runs (15 per fault)
 
 **Semi-Supervised Learning (Binary):**
-- `semisupervised_train.csv` - 320 normal runs only
-- `semisupervised_val.csv` - 160 normal runs only
-- `semisupervised_test.csv` - 120 normal + 170 faulty runs (10 per fault)
+- `binary_train.csv` - 320 normal runs only
+- `binary_val.csv` - 160 normal runs only
+- `binary_test.csv` - 120 normal + 170 faulty runs (10 per fault)
 
 ### Features
 
@@ -144,29 +137,6 @@ The `01-create-datasets.ipynb` notebook generates balanced train/val/test splits
 The 30-series notebooks apply Hidden Markov Model filtering to smooth predictions:
 - XGBoost: 93.91% → 95.90% (+2.0% with HMM)
 - Neural networks: <0.1% improvement (already smooth predictions)
-
-## Future Work
-
-Research proposals for follow-up papers are documented in `future-work/`:
-
-### 1. Class-wise Autoencoder Ensemble
-**File**: `future-work/class-wise-autoencoder-ensemble.md`
-
-Train one autoencoder per fault class (18 total). At inference, the class whose AE achieves the lowest reconstruction error is predicted. Key benefits:
-- Softmax over reconstruction errors provides uncertainty quantification
-- May generalize better to distribution shift (learns dynamics, not boundaries)
-- Interpretable: which faults have similar reconstruction patterns?
-
-### 2. Hierarchical Mixture of Experts with Open-Set Recognition
-**File**: `future-work/hierarchical-moe-open-set-recognition.md`
-
-Combine multiple pre-trained models (XGBoost, LSTM, CNN-Transformer) with:
-- Learned gating network to weight experts per input
-- Novelty detection for unknown fault classes (3, 9, 15)
-- Hierarchical structure for coarse-to-fine classification
-- Uncertainty quantification via entropy and expert disagreement
-
-**Key Discovery**: Faults 3, 9, 15 ARE available in the original Harvard Dataverse data. They were explicitly excluded in dataset creation but can be included for open-set evaluation.
 
 ## Development Workflow
 
@@ -229,17 +199,17 @@ Department of Chemical Engineering, Carnegie Mellon University, Pittsburgh, PA
 
 ## License
 
-[Add license information]
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Citation
 
 If you use this code or data, please cite:
 
 ```bibtex
-@article{sunshine2024benchmarking,
+@article{sunshine2025benchmarking,
   title={Benchmarking Machine Learning Anomaly Detection Methods on the Tennessee Eastman Process Dataset},
   author={Sunshine, Ethan M. and Lyu, Naixin and Botcha, Suraj and Kulkarni, Eesha and Pagaria, Shreya and Alves, Victor and Kitchin, John R.},
-  year={2024}
+  year={2025}
 }
 ```
 

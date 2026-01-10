@@ -86,6 +86,9 @@ results/
 figures/
 plots/
 
+# Archive
+archive/
+
 # But keep data directories structure
 !data/.gitkeep
 !figures/.gitkeep
