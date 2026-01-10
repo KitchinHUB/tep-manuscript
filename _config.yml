@@ -1,0 +1,66 @@
+# Jupyter Book configuration
+# See https://jupyterbook.org/en/stable/customize/config.html
+
+title: "Benchmarking ML Methods for TEP Fault Detection"
+author: "Ethan M. Sunshine, Naixin Lyu, Suraj Botcha, Eesha Kulkarni, Shreya Pagaria, Victor Alves, John R. Kitchin"
+copyright: "2025"
+logo: ""
+
+# Force re-execution of notebooks on each build.
+# See https://jupyterbook.org/content/execute.html
+execute:
+  execute_notebooks: "off"  # Don't re-execute notebooks (they have outputs)
+  timeout: -1  # No timeout if execution is enabled
+
+# Exclude files/directories from the build
+exclude_patterns:
+  - _build
+  - Thumbs.db
+  - .DS_Store
+  - "**.ipynb_checkpoints"
+  - v1/**           # Legacy reference notebooks
+  - CLAUDE.md       # Claude Code instructions
+  - manuscript/**   # LaTeX manuscript (separate from Jupyter Book)
+
+# Define the name of the latex output file for PDF builds
+latex:
+  latex_documents:
+    targetname: book.tex
+
+# Information about where the book exists on the web
+repository:
+  url: https://github.com/KitchinHUB/tep-manuscript
+  path_to_book: ""
+  branch: main
+
+# Add GitHub buttons to your book
+html:
+  use_issues_button: true
+  use_repository_button: true
+  use_edit_page_button: false
+
+# Launch buttons (optional - for Binder/Colab)
+launch_buttons:
+  notebook_interface: "classic"
+  binderhub_url: ""
+  colab_url: ""
+
+# Sphinx configuration
+sphinx:
+  config:
+    html_theme_options:
+      navigation_depth: 3
+    suppress_warnings:
+      - mystnb.unknown_mime_type
+
+# Parse configuration
+parse:
+  myst_enable_extensions:
+    - colon_fence
+    - deflist
+    - dollarmath
+    - html_image
+    - linkify
+    - replacements
+    - smartquotes
+    - substitution

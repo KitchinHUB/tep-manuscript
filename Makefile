@@ -1,4 +1,4 @@
-.PHONY: help clean all 00-series data eda system install new-tep-data detector-trajectory tep-sim-validation new-eval
+.PHONY: help clean all 00-series data eda system install new-tep-data detector-trajectory tep-sim-validation new-eval book book-clean book-serve book-pdf
 
 # Default target
 .DEFAULT_GOAL := help
@@ -717,6 +717,31 @@ detector-summary: ## Run 57-detector-comparison-summary.ipynb
 		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
 		$(NOTEBOOKS_DIR)/57-detector-comparison-summary.ipynb
 	@echo "✓ Detector comparison summary complete"
+
+##@ Jupyter Book
+.PHONY: book book-clean book-serve
+
+BOOK_DIR := _build
+
+book: ## Build Jupyter Book HTML
+	@echo "Building Jupyter Book..."
+	@jupyter-book build .
+	@echo "Book built at $(BOOK_DIR)/html/index.html"
+
+book-clean: ## Clean Jupyter Book build artifacts
+	@echo "Cleaning Jupyter Book build..."
+	@jupyter-book clean .
+	@rm -rf $(BOOK_DIR)
+	@echo "Jupyter Book build cleaned"
+
+book-serve: book ## Build and serve Jupyter Book locally
+	@echo "Serving Jupyter Book at http://localhost:8000..."
+	@cd $(BOOK_DIR)/html && $(PYTHON) -m http.server 8000
+
+book-pdf: ## Build Jupyter Book PDF (requires LaTeX)
+	@echo "Building Jupyter Book PDF..."
+	@jupyter-book build . --builder pdflatex
+	@echo "PDF built at $(BOOK_DIR)/latex/book.pdf"
 
 ##@ Utilities
 clean: ## Remove generated outputs (keeps source data)

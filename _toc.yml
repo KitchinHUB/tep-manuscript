@@ -1,0 +1,59 @@
+# Table of contents
+# See https://jupyterbook.org/en/stable/structure/toc.html
+
+format: jb-book
+root: README
+parts:
+  - caption: Data Preparation
+    chapters:
+      - file: notebooks/00-system
+      - file: notebooks/01-create-datasets
+      - file: notebooks/02-exploratory-data-analysis
+      - file: notebooks/03-generate-new-tep-dataset
+      - file: notebooks/04-tep-sim-data-validation
+
+  - caption: Hyperparameter Tuning
+    chapters:
+      - file: 10-summary
+      - file: notebooks/10-xgboost-hyperparameter-tuning
+      - file: notebooks/11-lstm-hyperparameter-tuning
+      - file: notebooks/12-lstm-fcn-hyperparameter-tuning
+      - file: notebooks/13-cnn-transformer-hyperparameter-tuning
+      - file: notebooks/14-transkal-hyperparameter-tuning
+      - file: notebooks/15-lstm-autoencoder-hyperparameter-tuning
+      - file: notebooks/16-conv-autoencoder-hyperparameter-tuning
+      - file: notebooks/17-hyperparameter-summary
+
+  - caption: Final Model Training
+    chapters:
+      - file: 20-summary
+      - file: notebooks/20-xgboost-final-training
+      - file: notebooks/21-lstm-final-training
+      - file: notebooks/22-lstm-fcn-final-training
+      - file: notebooks/23-cnn-transformer-final-training
+      - file: notebooks/24-transkal-final-training
+      - file: notebooks/25-lstm-autoencoder-final-training
+      - file: notebooks/26-conv-autoencoder-final-training
+      - file: notebooks/27-model-comparison-summary
+
+  - caption: HMM Filter Evaluation
+    chapters:
+      - file: 30-summary
+      - file: notebooks/30-xgboost-hmm-filter
+      - file: notebooks/31-lstm-hmm-filter
+      - file: notebooks/32-lstm-fcn-hmm-filter
+      - file: notebooks/33-cnn-transformer-hmm-filter
+      - file: notebooks/34-transkal-hmm-filter
+      - file: notebooks/37-hmm-filter-comparison-summary
+
+  - caption: New Data Evaluation
+    chapters:
+      - file: 40-summary
+      - file: notebooks/40-xgboost-new-data-evaluation
+      - file: notebooks/41-lstm-new-data-evaluation
+      - file: notebooks/42-lstm-fcn-new-data-evaluation
+      - file: notebooks/43-cnn-transformer-new-data-evaluation
+      - file: notebooks/44-transkal-new-data-evaluation
+      - file: notebooks/45-lstm-autoencoder-new-data-evaluation
+      - file: notebooks/46-conv-autoencoder-new-data-evaluation
+      - file: notebooks/47-model-comparison-new-data

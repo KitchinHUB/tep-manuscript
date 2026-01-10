@@ -84,6 +84,9 @@ venv.bak/
 venv/
 wheels/
 
+# Jupyter Book build artifacts
+_build/
+
 # LaTeX build artifacts
 manuscript/main.aux
 manuscript/main.bbl
