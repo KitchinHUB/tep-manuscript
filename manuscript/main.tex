@@ -15,10 +15,13 @@
 %%
 %% Released under the Creative Commons 0 license
 %% https://creativecommons.org/public-domain/cc0/
-%% 
+%%
 %% Copyight (c) 2025 Joseph Wright
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\documentclass[letterpaper, 12pt]{article}
+\documentclass[
+  journal=iecred,
+  manuscript=article
+]{achemso}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Font setup - delete if you are using LuaLaTeX
@@ -46,7 +49,7 @@
 % "maxnames = 15" to print no more than 15 authors.
 %\usepackage[style = chem-acs]{biblatex}
 %\addbibresource{references.bib}
-% If you are using classical BibTeX, remove the above lines and 
+% If you are using classical BibTeX, remove the above lines and
 % uncomment:
 \usepackage{achemso}
 
@@ -71,7 +74,7 @@
 \newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Many journals require that sections are unnumbered: this 
+%% Many journals require that sections are unnumbered: this
 %% is activated here
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \setcounter{secnumdepth}{-1}
@@ -106,7 +109,7 @@
 \hypersetup{
     colorlinks=true,
     linkcolor=blue,
-    filecolor=blue,      
+    filecolor=blue,
     urlcolor=blue,
     citecolor=blue,
 }
@@ -121,8 +124,8 @@
 
 
 \begin{abstract}
-% The Tennessee Eastman Process (TEP) dataset serves as a standard benchmark in process systems engineering due to its complex, multivariate, and dynamic process behavior in important subfields such as process control and fault diagnosis. In this study, we explore a comprehensive suite of machine learning and deep learning methods for multivariate time-series anomaly detection on the TEP dataset, which includes both fault-free and faulty operating conditions across 20 distinct fault types of which 17 are analyzed in our work. Our methodology begins with data preprocessing steps, including standardization and encoding, to manage the high-dimensional nature of the dataset comprising 55 process variables. We evaluate a range of models, starting with XGBoost as a classical machine learning baseline to sequence deep learning approaches including LSTM-based classifiers, LSTM-FCN, convolutional-based transformer classifier, and we further introduce a Transformer-Kalman (TransKal) classifier. Additionally, hybrid architectures such as LSTM Autoencoders and Convolutional Autoencoders as binary classifiers are investigated to enhance detection robustness. All supervised models were trained and validated on combined fault-free and faulty datasets to ensure generalizability across diverse operating scenarios, whereas semi-supervised models were trained exclusively on fault-free data to learn normal process behavior and detect deviations during inference. We developed a unified protocol using accuracy, F1-score, and complementary metrics for consistent model evaluation. Our proposed TransKal classifier demonstrated superior diagnostic performance, achieving an overall accuracy of 99.34\% and an F1-Score of 99.37\%, outperforming all other evaluated baseline models for the 17 faults examined in this work. This study provides comparative insights into model performance, interpretability and reliability for real-time industrial fault detection applications and offers a clear benchmark for designing real-time FDD systems in chemical process industries.
-The Tennessee Eastman Process (TEP) dataset is a standard benchmark for process control and fault diagnosis due to its complex, multivariate dynamics. We evaluate a broad range of machine learning and deep learning methods for multivariate time-series anomaly detection on TEP, covering 17 of its 20 fault types. After preprocessing the 55-variable dataset, we benchmark classical models such as XGBoost and sequence models including LSTM classifiers, LSTM-FCN, a convolutional transformer, and our proposed Transformer-Kalman (TransKal) classifier. We also assess hybrid LSTM and convolutional autoencoder approaches. Supervised models were trained on combined normal and faulty data, while semi-supervised models used only normal data. TransKal achieved the best performance, with 99.37\% accuracy and 99.37\% F1, providing a strong benchmark for real-time industrial FDD.
+
+The Tennessee Eastman Process (TEP) dataset is a standard benchmark for process control and fault diagnosis due to its complex, multivariate dynamics. We evaluate a broad range of machine learning and deep learning methods for multivariate time-series anomaly detection on TEP, covering 17 of its 20 fault types. After preprocessing the 55-variable dataset, we benchmark classical models such as XGBoost and sequence models including LSTM classifiers, LSTM-FCN, a convolutional transformer, and our proposed Transformer-Kalman (TransKal) classifier. We also assess hybrid LSTM and convolutional autoencoder approaches. Supervised models were trained on combined normal and faulty data, while semi-supervised models used only normal data. Finally, we evaluate the models using an independent dataset to assess generalizability. Several models achieved 99\%+ multiclass accuracy, but showed fragility on the independent dataset.
 \end{abstract}
 
 \section*{Keywords}
@@ -145,5 +148,9 @@ Anomaly Detection, Fault Detection, Process Monitoring, Machine Learning, Indust
 \bibliography{references.bib}
 
 \newpage
+
+\begin{tocentry}
+\includegraphics[width=3.25in]{figures/toc.png}
+\end{tocentry}
 
 \end{document}

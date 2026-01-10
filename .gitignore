@@ -1,101 +1,85 @@
-# Python
+
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
+!data/.gitkeep
+!data/README.md
+!figures/.gitkeep
+!outputs/**/*.log
+!outputs/**/*.pkl
+.DS_Store
+.eggs/
+.env
+.idea/
+.installed.cfg
+.ipynb_checkpoints
 .Python
+.venv
+.vscode/
+*.bak
+*.ckpt
+*.egg
+*.egg-info/
+*.h5
+*.hdf5
+*.keras
+*.log
+*.npy
+*.npz
+*.pickle
+*.pkl
+*.pt
+*.pth
+*.py[cod]
+*.Rdata
+*.RData
+*.so
+*.swp
+*.tmp
+*.zip
+*/.ipynb_checkpoints/*
+*~
+*$py.class
+# Archive
+# But keep data directories structure
+# Data files (large)
+# Dataset directories (large raw data)
+# Exception: Keep small example data or manifests
+# IPython
+# Jupyter Notebook
+# Logs
+# Model checkpoints (large)
+# OS
+# Output directories
+# Outputs - track everything (all files are small)
+# PyCharm
+# Python
+# Temporary files
+# Virtual environments
+# VSCode
+archive/
 build/
+data/
+Dataset/
 develop-eggs/
 dist/
 downloads/
 eggs/
-.eggs/
+env.bak/
+env/
+ENV/
+figures/
+ipython_config.py
 lib/
 lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# Virtual environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-*/.ipynb_checkpoints/*
-
-# IPython
-profile_default/
-ipython_config.py
-
-# PyCharm
-.idea/
-
-# VSCode
-.vscode/
-
-# Data files (large)
-*.h5
-*.hdf5
-*.pkl
-*.pickle
-*.npy
-*.npz
-*.zip
-*.RData
-*.Rdata
-
-# Dataset directories (large raw data)
-Dataset/
-data/
-
-# Model checkpoints (large)
-*.pth
-*.pt
-*.ckpt
-*.keras
-*.h5
-
-# Logs
-*.log
 logs/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Temporary files
-*.tmp
-*.bak
-*.swp
-*~
-
-# Output directories
-results/
-figures/
+MANIFEST
+parts/
 plots/
-
-# Archive
-archive/
-
-# But keep data directories structure
-!data/.gitkeep
-!figures/.gitkeep
-
-# Exception: Keep small example data or manifests
-!data/README.md
-
-# Outputs - track everything (all files are small)
-!outputs/**/*.pkl
-!outputs/**/*.log
+profile_default/
+results/
+sdist/
+share/python-wheels/
+Thumbs.db
+var/
+venv.bak/
+venv/
+wheels/
