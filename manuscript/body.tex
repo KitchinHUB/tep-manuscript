@@ -6,7 +6,7 @@ To evaluate FDD methodologies, researchers frequently employ complex industrial 
 
 Historically, FDD research began with Multivariate Statistical Process Monitoring techniques including  Shewhart control charts, as well as Principal Component Analysis (PCA), in which the latter models the variance of normal data to establish a statistical baseline \cite{yelamos_performance_2009, grbovic_cold_2013}. However, such linear methods proved inadequate in modeling the intricate systems that present challenging nonlinear dynamics, including TEP, often failing to detect a significant portion of faults and required extensive manual feature engineering \cite{yin_comparison_2012, gao_improved_2016}. The field then shifted to classical machine learning (e.g., Support Vector Machines (SVMs)\cite{moura_failure_2011} and XGBoost\cite{harinarayan_xfddc_2022}), which demonstrated superior classification but struggled with temporal dependencies and scalability \cite{amin_process_2018}.
 
-The introduction of deep learning enabled automatic hierarchical feature extraction from raw sensor data. This advanced FDD on both fronts. For the semi-supervised detection task, models like Autoencoders (AEs) gained prominence \cite{cheng_novel_2019}. By learning to reconstruct only normal data, they can flag any data they fail to reconstruct as an anomaly. For the supervised diagnosis task, researchers turned to models designed to process sequential data, as a fault’s unique signature often unfolds over time. Models such as Recurrent Neural Networks (RNNs), Long Short-Term Memory (LSTM) networks, and, more recently, transformer architectures have proven exceptionally effective at learning the distinct temporal patterns required to diagnose the specific fault type \cite{hochreiter_long_1997, arunthavanathan_deep_2021, zhang_generalized_2022}.
+The introduction of deep learning enabled automatic hierarchical feature extraction from raw sensor data. This advanced FDD on both fronts. For the semi-supervised detection task, models like Autoencoders (AEs) gained prominence \cite{cheng_novel_2019}. By learning to reconstruct only normal data, they can flag any data they fail to reconstruct as an anomaly. For the supervised diagnosis task, researchers turned to models designed to process sequential data, as a fault's unique signature often unfolds over time. Models such as Recurrent Neural Networks (RNNs), Long Short-Term Memory (LSTM) networks, and, more recently, transformer architectures have proven exceptionally effective at learning the distinct temporal patterns required to diagnose the specific fault type \cite{hochreiter_long_1997, arunthavanathan_deep_2021, zhang_generalized_2022}.
 
 Despite this proliferation of advanced models, a critical gap persists in the literature: it is virtually impossible to fairly compare their performance. Published results are often inconsistent and incomplete. For example, while one study \cite{verma_deep_2022} on a supervised LSTM model reports an exceptional accuracy of 99.2\% , and second one \cite{lomov_fault_2021} highlights a recall of 99.88\% using a Gated Recurrent Unit (GRU), a third study leveraging image processing techniques reports a leading F1-score of 98.81\% \cite{hajihosseini_fault_2018}. These results are not comparable as they are derived from different data splits and, crucially, potentially inadequately balanced dataset subsets. Many traditional TEP benchmarks are derived from single simulation runs, where normal operating data vastly outweighs the limited samples available for each fault class, skewing model evaluation. An operator cannot know if the model with the highest accuracy also suffers from low recall on a critical fault, or if the model with the highest recall generates an unacceptable number of false alarms.
 
@@ -72,7 +72,7 @@ In addition, the process comprises five primary operational units: a reactor, a 
     \end{tabular}
 \end{table}
 
-The TEP simulation includes 20 programmed process faults (IDV1–IDV20) in addition to the normal operating condition (IDV0), described in Table \ref{table:TEP_faults}, which was based directly on the descriptions detailed in the literature \cite{Chiang2001}. These faults represent a variety of disturbance types, such as step changes, random variations, slow drifts, and sticking valves. Following common practice in TEP-based FDD research \cite{zhao_novel_2025}, this study focuses on 17 of the 20 faults, excluding faults IDV3, IDV9, and IDV15 due to their minimal deviation from normal process behavior, resulting in longer detection times \cite{shams_fault_2010}. The multiclass classification task in this work, therefore, involves identifying the normal state and the remaining 17 distinct fault types.
+The TEP simulation includes 20 programmed process faults (IDV1-IDV20) in addition to the normal operating condition (IDV0), described in Table \ref{table:TEP_faults}, which was based directly on the descriptions detailed in the literature \cite{Chiang2001}. These faults represent a variety of disturbance types, such as step changes, random variations, slow drifts, and sticking valves. Following common practice in TEP-based FDD research \cite{zhao_novel_2025}, this study focuses on 17 of the 20 faults, excluding faults IDV3, IDV9, and IDV15 due to their minimal deviation from normal process behavior, resulting in longer detection times \cite{shams_fault_2010}. The multiclass classification task in this work, therefore, involves identifying the normal state and the remaining 17 distinct fault types.
 
 
 
@@ -88,7 +88,7 @@ In the following subsections we provide a narrative description of each of these
 
 \subsubsection{Data Scaling}
 
-The data were normalized using $z$-score normalization. Importantly, we calculated the mean and variance parameters exclusively from the training dataset and then applied to the validation and test sets. This prevents data leakage from the hold-out sets into the training process, ensuring an unbiased evaluation of the model’s generalization capabilities.
+The data were normalized using $z$-score normalization. Importantly, we calculated the mean and variance parameters exclusively from the training dataset and then applied to the validation and test sets. This prevents data leakage from the hold-out sets into the training process, ensuring an unbiased evaluation of the model's generalization capabilities.
 
 \subsubsection{Sequence Generation for Temporal Models}
 
@@ -142,9 +142,7 @@ For binary anomaly detection using autoencoder models, we additionally report th
 
   \subsection{Hidden Markov Model Classification Filter}
 
-  To exploit the temporal consistency inherent in process fault conditions, we applied a Hidden Markov Model (HMM) classification filter as a post-processing step to smooth the predictions of trained classifiers. This approach is motivated by the observation that industrial faults typically persist over time rather than appearing and disappearing instantaneously, yet instantaneous classifiers may produce temporally inconsistent predictions.
-
-  The HMM filter treats the true fault state as a hidden variable and the classifier's predictions as noisy observations of this state. The filter performs sequential Bayesian updates to estimate the most likely fault state given the history of observations. Specifically, the filter comprises two components:
+  To exploit the temporal consistency inherent in process fault conditions, we applied a Hidden Markov Model (HMM) classification filter as a post-processing step to smooth the predictions of trained classifiers. This approach is motivated by the observation that industrial faults typically persist over time rather than appearing and disappearing instantaneously, yet instantaneous classifiers may produce temporally inconsistent predictions. The HMM filter treats the true fault state as a hidden variable and the classifier's predictions as noisy observations of this state. The filter performs sequential Bayesian updates to estimate the most likely fault state given the history of observations. Specifically, the filter comprises two components:
 
   \paragraph{Emission Model}
   The emission probability $P(\hat{y}_t | y_t)$, representing the probability of observing prediction $\hat{y}_t$ given true state $y_t$, is derived from the classifier's confusion matrix on the validation set. This captures the characteristic error patterns of each classifier.
@@ -173,7 +171,9 @@ For binary anomaly detection using autoencoder models, we additionally report th
 
 \subsection{Use of Generative AI}
 
-  The initial experimental design, model architecture selection, and research direction for this work were developed by the authors. Claude Code, an AI-powered coding assistant developed by Anthropic, was subsequently used to orchestrate consistent hyperparameter tuning, model training, and evaluation workflows across all seven model architectures. This included generating standardized notebook templates, ensuring reproducible experimental protocols, and maintaining consistent evaluation metrics throughout the study. Claude Code also assisted in drafting and revising portions of the manuscript text. All numerical results, figures, and performance metrics reported in this paper are generated directly from the Jupyter notebooks provided in the Supporting Information, which can be executed to reproduce the complete analysis.
+The initial experimental design, model architecture selection, and research direction for this work were developed by the authors. Claude Code, an AI-powered coding assistant developed by Anthropic, was subsequently used to orchestrate consistent hyperparameter tuning, model training, and evaluation workflows across all seven model architectures. This included generating standardized notebook templates, ensuring reproducible experimental protocols, and maintaining consistent evaluation metrics throughout the study. Claude Code also assisted in drafting and revising portions of the manuscript text. All numerical results, figures, and performance metrics reported in this paper are generated directly from the Jupyter notebooks provided in the Supporting Information, which can be executed to reproduce the complete analysis.
+
+Additionally, we provide a ~CLAUDE.md~ file in the Supporting Information. This is a markdown file that contains details about the repository structure, and the file is used by Claude Code to ``learn'' about the project. This facilitates others using Claude Code (or other LLMs) to interact with the work.
 
 \section{Results and Discussion}
 
@@ -270,7 +270,7 @@ This section presents and discusses the performance of the developed FDD models.
 
   \subsubsection{Multiclass Fault Classification}
 
-  Table~\ref{tab:multiclass_results} presents the test set performance for all multiclass classification models. LSTM-FCN achieved the highest accuracy (99.37\%) and F1 score (0.9937), followed closely by CNN-Transformer (99.20\%), LSTM (99.14\%), and TransKal (99.09\%). XGBoost, despite being optimized with 499 estimators and extensive regularization, achieved substantially lower performance (93.91\%), demonstrating the importance of temporal modeling for this task.
+  Table~\ref{tab:multiclass_results} and Figure \ref{fig:radar1} present the test set performance for all multiclass classification models. LSTM-FCN achieved the highest accuracy (99.37\%) and F1 score (0.9937), followed closely by CNN-Transformer (99.20\%), LSTM (99.14\%), and TransKal (99.09\%). XGBoost, despite being optimized with 499 estimators and extensive regularization, achieved substantially lower performance (93.91\%), demonstrating the importance of temporal modeling for this task.
 
   \begin{table}[htbp]
   \centering
@@ -287,9 +287,17 @@ This section presents and discusses the performance of the developed FDD models.
   XGBoost & 93.91\% & 0.9416 & 0.9484 & 0.9391 & 40m 0s \\
   \bottomrule
   \end{tabular}
-  \end{table}
+\end{table}
 
-  The performance gap between deep learning models and XGBoost (approximately 5--6\% accuracy) highlights the value of architectures that explicitly model temporal dependencies. Among the deep learning approaches, the differences are more subtle: LSTM-FCN's combination of recurrent and convolutional processing provides a modest advantage over pure recurrent (LSTM) or attention-based (CNN-Transformer, TransKal) approaches.
+
+The performance gap between deep learning models and XGBoost (approximately 5--6\% accuracy) highlights the value of architectures that explicitly model temporal dependencies. Among the deep learning approaches, the differences are more subtle: LSTM-FCN's combination of recurrent and convolutional processing provides a modest advantage over pure recurrent (LSTM) or attention-based (CNN-Transformer, TransKal) approaches.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/table5_option2_zoomed_scale.pdf}
+    \caption[]{Graphical representation of test set performance for the multiclass models. On the left a radar plot illustrates tradeoffs in each metric. On the right is a comparison of training times.}
+    \label{fig:radar1}
+  \end{figure}
 
   \subsubsection{Binary Anomaly Detection}
 

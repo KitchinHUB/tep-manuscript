@@ -1,4 +1,4 @@
-.PHONY: help clean all 00-series data eda system install new-tep-data detector-trajectory tep-sim-validation new-eval book book-clean book-serve book-pdf
+.PHONY: help clean all 00-series data eda system install new-tep-data tep-sim-validation new-eval book book-clean book-serve book-pdf
 
 # Default target
 .DEFAULT_GOAL := help
@@ -26,7 +26,6 @@ DATASET_NB := $(NOTEBOOKS_DIR)/01-create-datasets.ipynb
 EDA_NB := $(NOTEBOOKS_DIR)/02-exploratory-data-analysis.ipynb
 NEW_TEP_DATA_NB := $(NOTEBOOKS_DIR)/03-generate-new-tep-dataset.ipynb
 TEP_SIM_VALIDATION_NB := $(NOTEBOOKS_DIR)/04-tep-sim-data-validation.ipynb
-DETECTOR_TRAJ_NB := $(NOTEBOOKS_DIR)/05-generate-detector-trajectory.ipynb
 
 # Output artifacts
 SYSTEM_INFO := $(OUTPUTS_DIR)/system_info.txt
@@ -50,9 +49,6 @@ endif
 # New TEP data artifacts (from tep-sim)
 NEW_MULTICLASS_EVAL := $(DATA_DIR)/new_multiclass_eval$(MODE_SUFFIX).csv
 NEW_BINARY_EVAL := $(DATA_DIR)/new_binary_eval$(MODE_SUFFIX).csv
-
-# Detector trajectory artifacts
-DETECTOR_TRAJECTORY := $(DATA_DIR)/detector_trajectory$(MODE_SUFFIX).csv
 
 # EDA artifacts
 EDA_SUMMARY := $(OUTPUTS_DIR)/eda_summary.txt
@@ -169,26 +165,6 @@ $(NEW_MULTICLASS_EVAL) $(NEW_BINARY_EVAL): $(NEW_TEP_DATA_NB)
 		exit 1; \
 	fi
 	@echo "✓ New TEP evaluation datasets generated"
-
-detector-trajectory: $(DETECTOR_TRAJECTORY) ## Run 04-generate-detector-trajectory.ipynb - Generate detector evaluation trajectory
-
-$(DETECTOR_TRAJECTORY): $(DETECTOR_TRAJ_NB)
-	@echo "Running 04-generate-detector-trajectory.ipynb (QUICK_MODE=$(if $(QUICK_MODE),$(QUICK_MODE),False))..."
-	@if [ "$(QUICK_MODE)" = "True" ]; then \
-		echo "⚡ Quick mode: generating short trajectory (~1 min)"; \
-	else \
-		echo "Full mode: generating 42-hour trajectory (~2 min)"; \
-	fi
-	@mkdir -p $(DATA_DIR)
-	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
-		--ExecutePreprocessor.timeout=-1 \
-		--log-level=INFO \
-		$(DETECTOR_TRAJ_NB)
-	@if [ ! -f "$(DETECTOR_TRAJECTORY)" ]; then \
-		echo "Error: Expected output file $(DETECTOR_TRAJECTORY) not created"; \
-		exit 1; \
-	fi
-	@echo "✓ Detector trajectory generated"
 
 tep-sim-validation: ## Run 05-tep-sim-data-validation.ipynb - Validate TEP-Sim data independence and distribution
 	@if [ ! -f "$(NEW_MULTICLASS_EVAL)" ]; then \
@@ -627,96 +603,6 @@ $(FINAL_COMPARISON): $(FINAL_COMPARISON_NB) $(FINAL_XGBOOST_MODEL) $(FINAL_LSTM_
 		$(FINAL_COMPARISON_NB)
 	@touch $@
 	@echo "✓ Model comparison summary generated"
-
-##@ Pluggable Detectors (50-series)
-.PHONY: detectors detector-xgboost detector-lstm detector-lstm-fcn detector-cnn-transformer detector-transkal detector-lstm-ae detector-conv-ae detector-summary
-
-detectors: detector-xgboost detector-lstm detector-lstm-fcn detector-cnn-transformer detector-transkal detector-lstm-ae detector-conv-ae detector-summary ## Run all 50-series detector notebooks
-	@echo "✓ All detector evaluations complete"
-
-detector-xgboost: ## Run 50-xgboost-pluggable-detector.ipynb
-	@if [ ! -f "$(DETECTOR_TRAJECTORY)" ]; then \
-		echo "Error: $(DETECTOR_TRAJECTORY) not found. Run 'make detector-trajectory QUICK_MODE=$(QUICK_MODE)' first."; \
-		exit 1; \
-	fi
-	@echo "Running XGBoost detector evaluation..."
-	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
-		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/50-xgboost-pluggable-detector.ipynb
-	@echo "✓ XGBoost detector complete"
-
-detector-lstm: ## Run 51-lstm-pluggable-detector.ipynb
-	@if [ ! -f "$(DETECTOR_TRAJECTORY)" ]; then \
-		echo "Error: $(DETECTOR_TRAJECTORY) not found. Run 'make detector-trajectory QUICK_MODE=$(QUICK_MODE)' first."; \
-		exit 1; \
-	fi
-	@echo "Running LSTM detector evaluation..."
-	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
-		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/51-lstm-pluggable-detector.ipynb
-	@echo "✓ LSTM detector complete"
-
-detector-lstm-fcn: ## Run 52-lstm-fcn-pluggable-detector.ipynb
-	@if [ ! -f "$(DETECTOR_TRAJECTORY)" ]; then \
-		echo "Error: $(DETECTOR_TRAJECTORY) not found. Run 'make detector-trajectory QUICK_MODE=$(QUICK_MODE)' first."; \
-		exit 1; \
-	fi
-	@echo "Running LSTM-FCN detector evaluation..."
-	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
-		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/52-lstm-fcn-pluggable-detector.ipynb
-	@echo "✓ LSTM-FCN detector complete"
-
-detector-cnn-transformer: ## Run 53-cnn-transformer-pluggable-detector.ipynb
-	@if [ ! -f "$(DETECTOR_TRAJECTORY)" ]; then \
-		echo "Error: $(DETECTOR_TRAJECTORY) not found. Run 'make detector-trajectory QUICK_MODE=$(QUICK_MODE)' first."; \
-		exit 1; \
-	fi
-	@echo "Running CNN-Transformer detector evaluation..."
-	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
-		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/53-cnn-transformer-pluggable-detector.ipynb
-	@echo "✓ CNN-Transformer detector complete"
-
-detector-transkal: ## Run 54-transkal-pluggable-detector.ipynb
-	@if [ ! -f "$(DETECTOR_TRAJECTORY)" ]; then \
-		echo "Error: $(DETECTOR_TRAJECTORY) not found. Run 'make detector-trajectory QUICK_MODE=$(QUICK_MODE)' first."; \
-		exit 1; \
-	fi
-	@echo "Running TransKal detector evaluation..."
-	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
-		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/54-transkal-pluggable-detector.ipynb
-	@echo "✓ TransKal detector complete"
-
-detector-lstm-ae: ## Run 55-lstm-autoencoder-pluggable-detector.ipynb
-	@if [ ! -f "$(DETECTOR_TRAJECTORY)" ]; then \
-		echo "Error: $(DETECTOR_TRAJECTORY) not found. Run 'make detector-trajectory QUICK_MODE=$(QUICK_MODE)' first."; \
-		exit 1; \
-	fi
-	@echo "Running LSTM-Autoencoder detector evaluation..."
-	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
-		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/55-lstm-autoencoder-pluggable-detector.ipynb
-	@echo "✓ LSTM-Autoencoder detector complete"
-
-detector-conv-ae: ## Run 56-conv-autoencoder-pluggable-detector.ipynb
-	@if [ ! -f "$(DETECTOR_TRAJECTORY)" ]; then \
-		echo "Error: $(DETECTOR_TRAJECTORY) not found. Run 'make detector-trajectory QUICK_MODE=$(QUICK_MODE)' first."; \
-		exit 1; \
-	fi
-	@echo "Running Conv-Autoencoder detector evaluation..."
-	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
-		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/56-conv-autoencoder-pluggable-detector.ipynb
-	@echo "✓ Conv-Autoencoder detector complete"
-
-detector-summary: ## Run 57-detector-comparison-summary.ipynb
-	@echo "Running detector comparison summary..."
-	QUICK_MODE=$(QUICK_MODE) $(JUPYTER) nbconvert --to notebook --execute --inplace \
-		--ExecutePreprocessor.timeout=-1 --log-level=INFO \
-		$(NOTEBOOKS_DIR)/57-detector-comparison-summary.ipynb
-	@echo "✓ Detector comparison summary complete"
 
 ##@ Jupyter Book
 .PHONY: book book-clean book-serve
