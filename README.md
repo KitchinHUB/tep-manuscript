@@ -183,6 +183,72 @@ make git-add-code
 make git-commit MSG="Your commit message"
 ```
 
+## Contributing New Algorithms
+
+To add a new algorithm to this benchmark suite, follow this workflow:
+
+### Required: Create Two Notebooks
+
+**1. Hyperparameter Tuning (1X-series)**
+
+Create `notebooks/1X-<model>-hyperparameter-tuning.ipynb`:
+
+```python
+# Use QUICK_MODE pattern for fast iteration
+QUICK_MODE = os.environ.get('QUICK_MODE', 'False') == 'True'
+N_TRIALS = 5 if QUICK_MODE else 50
+
+def objective(trial):
+    # Define hyperparameter search space using trial.suggest_*
+    # Train model, return validation F1 score
+
+study = optuna.create_study(direction='maximize')
+study.optimize(objective, n_trials=N_TRIALS)
+```
+
+Save outputs to:
+- `outputs/hyperparams/<model>_best.json` - Best hyperparameters
+- `outputs/optuna_studies/<model>_study.pkl` - Optuna study object
+
+**2. Final Training (2X-series)**
+
+Create `notebooks/2X-<model>-final-training.ipynb`:
+- Load best hyperparameters from JSON
+- Train on full training set
+- Evaluate on validation and test sets
+- Save model to `outputs/models/<model>_final.pt` (or `.h5`)
+- Save metrics to `outputs/metrics/<model>_results.json`
+
+### Optional: Additional Notebooks
+
+- **3X-series**: HMM post-processing for temporal smoothing
+- **4X-series**: Evaluation on independent TEP-Sim data
+
+### Key Conventions
+
+1. **Data handling**: Create windows within simulation runs only (no cross-run leakage)
+2. **QUICK_MODE**: Support `QUICK_MODE=True` for rapid iteration
+3. **File naming**: `<model>_<type><mode_suffix>.<ext>` (add `_quick` suffix in QUICK_MODE)
+4. **Progress bars**: Use tqdm for CLI visibility
+5. **Random seeds**: Set for reproducibility
+
+### Add Makefile Targets
+
+```makefile
+HYPERPARAM_NEWMODEL := outputs/hyperparams/newmodel_best.json
+hyperparam-newmodel: $(HYPERPARAM_NEWMODEL)
+$(HYPERPARAM_NEWMODEL): notebooks/1X-newmodel-hyperparameter-tuning.ipynb $(DATA_FILES)
+	$(RUN_NOTEBOOK) $<
+```
+
+### Reference Notebooks
+
+Use existing notebooks as templates:
+- `notebooks/10-xgboost-hyperparameter-tuning.ipynb`
+- `notebooks/20-xgboost-final-training.ipynb`
+
+Most boilerplate (data loading, metrics, file I/O) can be copied directly.
+
 ## Authors
 
 - Ethan M. Sunshine

@@ -25,7 +25,6 @@ The Tennessee Eastman Process (TEP) serves as the benchmark for this study. The 
     \label{fig:TEP_flowsheet}
 \end{figure}
 
-
 \begin{equation}
 \begin{aligned} \label{eq:reaction_network}
 \mathrm{A}(\mathrm{g})+\mathrm{C}(\mathrm{g})+\mathrm{D}(\mathrm{g}) & \rightarrow \mathrm{G}(\mathrm{liq}), \\
@@ -35,9 +34,7 @@ The Tennessee Eastman Process (TEP) serves as the benchmark for this study. The 
 \end{aligned}
 \end{equation}
 
-In addition, the process comprises five primary operational units: a reactor, a product condenser, a vapor-liquid separator, a product stripper, and a recycle compressor. The reactor converts multiple gaseous and liquid reactants into the desired products (G and H) through an exothermic reaction network as described in Eq \ref{eq:reaction_network}. Afterward, the reactor products are sent to the condenser, which cools the reactor dowstream and  condenses overhead vapors. This resulting two-phase stream is sent to the separator, where non-condensable gases are recycled while the condensed liquid stream proceeds to the product stripper. In the stripper, light components are removed to achieve target product purity specifications, and the overhead vapors are also recompressed and recycled back to the reactor.
-
-
+In addition, the process comprises five primary operational units: a reactor, a product condenser, a vapor-liquid separator, a product stripper, and a recycle compressor. The reactor converts multiple gaseous and liquid reactants into the desired products (G and H) through an exothermic reaction network as described in Eq \ref{eq:reaction_network}. Afterward, the reactor products are sent to the condenser, which cools the reactor downstream and  condenses overhead vapors. This resulting two-phase stream is sent to the separator, where non-condensable gases are recycled while the condensed liquid stream proceeds to the product stripper. In the stripper, light components are removed to achieve target product purity specifications, and the overhead vapors are also recompressed and recycled back to the reactor.
 
 \begin{table}[ht]
     \centering
@@ -72,11 +69,7 @@ In addition, the process comprises five primary operational units: a reactor, a 
     \end{tabular}
 \end{table}
 
-The TEP simulation includes 20 programmed process faults (IDV1-IDV20) in addition to the normal operating condition (IDV0), described in Table \ref{table:TEP_faults}, which was based directly on the descriptions detailed in the literature \cite{Chiang2001}. These faults represent a variety of disturbance types, such as step changes, random variations, slow drifts, and sticking valves. Following common practice in TEP-based FDD research \cite{zhao_novel_2025}, this study focuses on 17 of the 20 faults, excluding faults IDV3, IDV9, and IDV15 due to their minimal deviation from normal process behavior, resulting in longer detection times \cite{shams_fault_2010}. The multiclass classification task in this work, therefore, involves identifying the normal state and the remaining 17 distinct fault types.
-
-
-
-
+The TEP simulation includes 20 programmed process faults (IDV1--IDV20) in addition to the normal operating condition (IDV0), described in Table \ref{table:TEP_faults}, which was based directly on the descriptions detailed in the literature \cite{Chiang2001}. These faults represent a variety of disturbance types, such as step changes, random variations, slow drifts, and sticking valves. Following common practice in TEP-based FDD research \cite{zhao_novel_2025}, this study focuses on 17 of the 20 faults, excluding faults IDV3, IDV9, and IDV15 due to their minimal deviation from normal process behavior, resulting in longer detection times \cite{shams_fault_2010}. The multiclass classification task in this work, therefore, involves identifying the normal state and the remaining 17 distinct fault types.
 
 \subsection{Data Preparation}
 
@@ -100,7 +93,7 @@ While the enriched dataset by Rieth et al. \cite{rieth_additional_2017} provides
 
 \subsection{Hyperparameter tuning}
 
-Hyperparameters for all models were optimized using Bayesian optimization via the Optuna framework \cite{akiba_optuna_2019} with a Tree-structured Parzen Estimator (TPE) sampler. Each model was tuned over 50 trials with the objective of maximizing the weighted F1 score on the validation set. To reduce computational cost, tuning was performed on 50 of the training data, sampled by complete simulation runs to preserve temporal structure. A MedianPruner terminated unpromising trials early based on intermediate validation performance. For deep learning models, early stopping with a patience of 5 epochs was applied within each trial. The optimal hyperparameters from tuning were then used for final model training on the complete dataset.
+Hyperparameters for all models were optimized using Bayesian optimization via the Optuna framework \cite{akiba_optuna_2019} with a Tree-structured Parzen Estimator (TPE) sampler. Each model was tuned over 50 trials with the objective of maximizing the weighted F1 score on the validation set. To reduce computational cost, tuning was performed on 50\% of the training data, sampled by complete simulation runs to preserve temporal structure. A MedianPruner terminated unpromising trials early based on intermediate validation performance. For deep learning models, early stopping with a patience of 5 epochs was applied within each trial. The optimal hyperparameters from tuning were then used for final model training on the complete dataset.
 
 \subsection{Metrics}
 
@@ -162,7 +155,7 @@ For binary anomaly detection using autoencoder models, we additionally report th
 
    \subsection{Generalization Evaluation on Independent Data}
 
-  To assess the generalization capability of the trained models beyond the original test set, we generated an independent evaluation dataset using the TEP simulator \texttt{tep-sim} \cite{kitchin_tennessee_eastman}. This software package wraps the original Fortan code in a Python module for ease of data generation. This evaluation addresses a critical question for industrial deployment: how well do models trained on historical data perform when process conditions exhibit natural variation?
+  To assess the generalization capability of the trained models beyond the original test set, we generated an independent evaluation dataset using the TEP simulator \texttt{tep-sim} \cite{kitchin_tennessee_eastman}. This software package wraps the original Fortran code in a Python module for ease of data generation. This evaluation addresses a critical question for industrial deployment: how well do models trained on historical data perform when process conditions exhibit natural variation?
 
   The independent dataset was generated with the following characteristics:
   1) Different random seeds: All simulation runs used random seeds distinct from those in the training, validation, and test sets, ensuring statistical independence; 2) Identical fault scenarios: The same 18 fault classes (normal operation plus 17 fault types) were simulated to enable direct comparison; 3) Consistent simulation protocol: Each simulation ran for 48 hours with faults injected at the 8-hour mark, matching the test set configuration.
@@ -178,7 +171,6 @@ Additionally, we provide a ~CLAUDE.md~ file in the Supporting Information. This 
 \section{Results and Discussion}
 
 This section presents and discusses the performance of the developed FDD models. We first present results from hyperparameter tuning and then final training. We show the results from the Hidden Markov Model filtering, and finally results from the independent dataset.
-
 
 \subsection{Hyperparameter Optimization Results}
 
@@ -263,7 +255,6 @@ This section presents and discusses the performance of the developed FDD models.
 
   Total hyperparameter tuning required approximately 49 hours across all seven models. The Convolutional Autoencoder was the most efficient to tune (1.2 hours), benefiting from its simple architecture, small training set (normal data only), and fast convergence with large batch sizes (128). TransKal required the longest tuning time (12.1 hours) due to the additional Kalman filter parameters and the computational overhead of the filtering step during each trial. These tuning times represent a one-time cost, as the optimized hyperparameters were subsequently used for final model training on the complete dataset.
 
-
 \subsection{Final Model Performance}
 
   All models were trained using the optimized hyperparameters on the complete training dataset and evaluated on the held-out test set. This section presents the performance results for both multiclass fault classification and binary anomaly detection tasks.
@@ -288,7 +279,6 @@ This section presents and discusses the performance of the developed FDD models.
   \bottomrule
   \end{tabular}
 \end{table}
-
 
 The performance gap between deep learning models and XGBoost (approximately 5--6\% accuracy) highlights the value of architectures that explicitly model temporal dependencies. Among the deep learning approaches, the differences are more subtle: LSTM-FCN's combination of recurrent and convolutional processing provides a modest advantage over pure recurrent (LSTM) or attention-based (CNN-Transformer, TransKal) approaches.
 
@@ -369,8 +359,6 @@ The performance gap between deep learning models and XGBoost (approximately 5--6
 
   Notably, the Kalman filter component in TransKal provided minimal benefit, improving accuracy by only 0.006\% over the raw Transformer predictions. This suggests that the base Transformer architecture already produces temporally consistent predictions, and the additional complexity of Kalman filtering may not be justified for this application.
 
-
-
 \subsection{Hidden Markov Model Classification Filtering}
 
   To evaluate whether post-hoc temporal smoothing could improve classification performance, we applied the HMM classification filter to all multiclass models with stickiness parameters $\gamma \in \{0.70, 0.85, 0.95\}$. Table~\ref{tab:hmm_results} summarizes the results, comparing raw model predictions to the best HMM-filtered performance for each model.
@@ -429,22 +417,9 @@ The performance gap between deep learning models and XGBoost (approximately 5--6
 
   Even with HMM filtering, XGBoost (95.90\% accuracy) still substantially underperforms the deep learning models (99.09--99.37\% accuracy). This persistent gap of approximately 3.5\% demonstrates that post-hoc temporal smoothing cannot fully compensate for the lack of learned temporal representations, reinforcing the value of architectures that natively model sequential dependencies for time series fault classification.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 \subsection{Generalization to Independent Data}
 
-  To assess model generalization beyond the original test set, all trained models were evaluated on an independently generated dataset using different random seeds in the TEP simulator. Table~\ref{tab:newdata_multiclass} presents the results for multiclass classification models, comparing performance on the original test set to the new evaluation set.
+  To assess model generalization beyond the original test set, all trained models were evaluated on an independently generated dataset using different random seeds in the TEP simulator. Table~\ref{tab:newdata_multiclass} presents the results for multiclass classification models, comparing performance on the original test set to the new evaluation set. 
 
   \begin{table}[htbp]
   \centering
@@ -469,9 +444,9 @@ The performance gap between deep learning models and XGBoost (approximately 5--6
 
   XGBoost showed moderate degradation, with accuracy dropping 4.51\% from 93.91\% to 89.40\%. This degradation is consistent with the model's lack of temporal context: without explicit sequence modeling, XGBoost relies on instantaneous feature distributions that may shift between independently generated datasets. The per-class analysis revealed that Class 5 ($-$0.21 F1) and Class 20 ($-$0.14 F1) suffered the largest degradations, suggesting these faults exhibit the greatest variability across different simulation seeds.
 
-  TransKal exhibited severe degradation on the new dataset, with accuracy dropping 11.52\% from 99.09\% to 87.57\%. This result is particularly striking given that the model showed no signs of overfitting on the original train/validation/test splits---validation and test performance were nearly identical (98.78\% and 99.09\% respectively). The failure therefore reflects not overfitting to the training data, but rather a lack of robustness to distribution shift between datasets generated with different random seeds.
+  TransKal exhibited severe degradation on the new dataset, with accuracy dropping 11.52\% from 99.09\% to 87.57\%. This result is particularly striking given that the model showed no signs of overfitting on the original train/validation/test splits; validation and test performance were nearly identical (98.78\% and 99.09\% respectively). The failure therefore reflects not overfitting to the training data, but rather a lack of robustness to distribution shift between datasets generated with different random seeds.
 
-  Further analysis revealed catastrophic failures on specific fault classes: Class 0 (normal operation) dropped to 0.00 F1, Class 4 dropped to 0.24 F1, and Class 10 dropped to 0.55 F1, while other classes such as 6, 7, and 14 maintained perfect performance. This selective failure pattern suggests that the Kalman filter parameters---process noise $Q = 5.04 \times 10^{-5}$ and measurement noise $R = 0.0223$---were calibrated to temporal dynamics that vary across simulation seeds. On the new dataset, the Kalman filter provided negligible improvement (0.03\% accuracy gain over raw Transformer predictions), confirming that the learned filtering dynamics do not transfer.
+  Further analysis revealed catastrophic failures on specific fault classes: Class 0 (normal operation) dropped to 0.00 F1, Class 4 dropped to 0.24 F1, and Class 10 dropped to 0.55 F1, while other classes such as 6, 7, and 14 maintained perfect performance. This selective failure pattern suggests that the Kalman filter parameters (process noise $Q = 5.04 \times 10^{-5}$ and measurement noise $R = 0.0223$) were calibrated to temporal dynamics that vary across simulation seeds. On the new dataset, the Kalman filter provided negligible improvement (0.03\% accuracy gain over raw Transformer predictions), confirming that the learned filtering dynamics do not transfer.
 
   This finding highlights a critical limitation of hybrid architectures that combine neural networks with classical state estimation: while the neural network component may learn generalizable features, the filter parameters can become tuned to dataset-specific temporal statistics. The base Transformer in TransKal likely learns robust representations, as evidenced by the CNN-Transformer's excellent generalization, but the addition of a Kalman filter with fixed parameters introduces brittleness. For robust deployment, such hybrid approaches may require online adaptation of filter parameters or more conservative parameter choices that are less sensitive to distributional variation.
 
@@ -496,7 +471,7 @@ The performance gap between deep learning models and XGBoost (approximately 5--6
   The Convolutional Autoencoder exhibited catastrophic failure on the new dataset, with accuracy plummeting 23.35\% from 99.39\% to 76.04\%. As with TransKal, this model showed no overfitting on the original data splits, so the failure reflects sensitivity to distribution shift rather than memorization. Despite the dramatic accuracy drop, the model maintained perfect recall (100\%), correctly identifying all faulty samples. The failure mode was a severe increase in false positives: many normal samples were incorrectly flagged as anomalies because their reconstruction errors exceeded the learned threshold. Notably, the ROC-AUC remained high at 0.981, indicating that the model still effectively separates normal from faulty samples in a ranking sense. This confirms that the learned representations retain discriminative power; the failure lies in the threshold calibration. The reconstruction error distribution for normal samples shifted on the new data, rendering the threshold optimized on
   the original data ineffective. Threshold recalibration on a small sample of new normal data could potentially recover performance, but this requirement limits the model's practical utility for deployment without adaptation mechanisms.
 
-  These generalization results reveal a consistent pattern: models with fixed calibrated parameters---whether Kalman filter noise estimates or anomaly detection thresholds---exhibit brittleness to distribution shift, even when they show no signs of overfitting on the original data. In contrast, pure neural architectures (CNN-Transformer, LSTM, LSTM-FCN) that learn end-to-end without such calibrated components demonstrate robust generalization.
+  These generalization results reveal a consistent pattern: models with fixed calibrated parameters, whether Kalman filter noise estimates or anomaly detection thresholds, exhibit brittleness to distribution shift, even when they show no signs of overfitting on the original data. In contrast, pure neural architectures (CNN-Transformer, LSTM, LSTM-FCN) that learn end-to-end without such calibrated components demonstrate robust generalization.
 
   Table~\ref{tab:generalization_ranking} summarizes the overall generalization ranking across all models.
 
@@ -521,7 +496,6 @@ The performance gap between deep learning models and XGBoost (approximately 5--6
 
   For practical deployment, the CNN-Transformer emerges as the most robust architecture for multiclass fault classification, uniquely improving on unseen data while maintaining computational tractability. For anomaly detection, the LSTM Autoencoder provides more stable generalization than the Convolutional Autoencoder, despite achieving lower accuracy on the original test set. When high original-test-set accuracy is prioritized over generalization robustness, LSTM-FCN remains an excellent choice with only modest degradation on new data. The severe failures of TransKal and Conv-AE underscore the risks of deploying models with components that are sensitive to dataset-specific statistics without mechanisms for online adaptation or periodic recalibration.
 
-
 \subsection{Limitations}
 
   Several limitations of this work should be acknowledged. First, the study used a specific balanced subset of the available data, with equal numbers of samples per fault class. While this design choice facilitates fair comparison across fault types and avoids class imbalance artifacts, different sampling strategies could favor other models. An imbalanced dataset reflecting realistic fault frequencies, where normal operation dominates and certain faults are rare, might reveal different performance trade-offs and could benefit from specialized techniques such as oversampling, class weighting, or cost-sensitive learning.
@@ -530,7 +504,7 @@ The performance gap between deep learning models and XGBoost (approximately 5--6
 
   Third, the generalization evaluation, while informative, was limited to data generated from the same TEP simulator with different random seeds. This tests robustness to stochastic variation but does not address generalization to different operating conditions, equipment degradation, or the sim-to-real gap that would be encountered in actual industrial deployment. The severe degradation observed for TransKal and the Convolutional Autoencoder on even this modest distribution shift raises concerns about deployment robustness that warrant further investigation with more diverse evaluation scenarios.
 
-  Fourth, models incorporating calibrated parameters---specifically the Kalman filter noise parameters in TransKal and the anomaly detection thresholds in the autoencoders---exhibited brittleness to distribution shift despite showing no overfitting on the original data splits. This limitation is particularly relevant for industrial applications where process conditions may drift over time. Practical deployment of such models would require mechanisms for online parameter adaptation or periodic recalibration, which were not explored in this work.
+  Fourth, models incorporating calibrated parameters, specifically the Kalman filter noise parameters in TransKal and the anomaly detection thresholds in the autoencoders, showed brittleness to distribution shift despite showing no overfitting on the original data splits. This limitation is particularly relevant for industrial applications where process conditions may drift over time. Practical deployment of such models would require mechanisms for online parameter adaptation or periodic recalibration, which were not explored in this work.
 
   Finally, all experiments were conducted on simulated data from a well-characterized benchmark process. While the TEP dataset provides a valuable standardized testbed, real industrial processes exhibit complexities not captured in simulation, including sensor noise, missing data, unmeasured disturbances, and evolving fault modes. Validation on real industrial data would be necessary to confirm the practical utility of these methods.
 
@@ -540,7 +514,7 @@ The performance gap between deep learning models and XGBoost (approximately 5--6
 
   The results demonstrate that deep learning architectures with explicit temporal modeling substantially outperform classical machine learning approaches for fault classification in dynamic processes. All deep learning models achieved greater than 99\% accuracy on the original test set, compared to 93.91\% for the optimized XGBoost baseline. This 5--6\% performance gap persisted even after applying HMM classification filtering to smooth XGBoost's predictions, confirming that post-hoc temporal processing cannot fully compensate for the lack of learned sequential representations. Among the deep learning approaches, LSTM-FCN achieved the highest test set accuracy (99.37\%) by combining recurrent processing for temporal dependencies with convolutional processing for local pattern detection.
 
-  The generalization evaluation on independently generated data revealed critical insights for practical deployment. The CNN-Transformer was the only model to improve on new data, achieving 99.57\% accuracy compared to 99.20\% on the original test set, demonstrating that self-attention mechanisms learn particularly robust temporal features. LSTM and LSTM-FCN maintained strong performance with modest degradation below 0.5\%. In contrast, models incorporating calibrated parameters---TransKal with its Kalman filter and the Convolutional Autoencoder with its anomaly threshold---exhibited severe degradation despite showing no overfitting on the original data splits. This finding highlights a critical limitation of hybrid architectures: while neural network components may learn generalizable features, calibrated parameters can become tuned to dataset-specific statistics and introduce brittleness to distribution shift.
+  The generalization evaluation on independently generated data revealed critical insights for practical deployment. The CNN-Transformer was the only model to improve on new data, achieving 99.57\% accuracy compared to 99.20\% on the original test set, demonstrating that self-attention mechanisms learn particularly robust temporal features. LSTM and LSTM-FCN maintained strong performance with modest degradation below 0.5\%. In contrast, models incorporating calibrated parameters, e.g. TransKal with its Kalman filter and the Convolutional Autoencoder with its anomaly threshold, exhibited severe degradation despite showing no overfitting on the original data splits. This finding highlights a critical limitation of hybrid architectures: while neural network components may learn generalizable features, calibrated parameters can become tuned to dataset-specific statistics and introduce brittleness to distribution shift.
 
   For binary anomaly detection using only normal training data, the Convolutional Autoencoder achieved the highest original test set performance (99.39\% accuracy) with remarkably efficient training (56 seconds), but the LSTM Autoencoder provided more stable generalization to new data. This trade-off between peak performance and robustness has important implications for industrial deployment, where process conditions may drift over time.
 
@@ -550,8 +524,6 @@ The performance gap between deep learning models and XGBoost (approximately 5--6
 
   In conclusion, this work establishes that temporal deep learning architectures, particularly those based on attention mechanisms, provide robust and accurate fault detection for complex chemical processes. The comprehensive benchmark results and generalization analysis presented here offer guidance for practitioners selecting fault detection methods for industrial deployment and highlight the importance of evaluating models on independently generated data to assess true generalization capability.
 
-
   \section*{Data Availability}
 
-  All code, data, and trained models required to reproduce the results presented in this paper are available in a public GitHub repository at \url{https://github.com/KitchinHUB/tep-manuscript}. The repository contains Jupyter notebooks organized by analysis stage: dataset creation (01-series), hyperparameter tuning (10-series), final model training and evaluation (20-series), HMM classification filtering (30-series), and generalization evaluation on independent data (40-series). Each notebook can be executed to regenerate the corresponding results, figures, and metrics reported in this paper. The repository also includes the optimized hyperparameters, trained model weights, and preprocessed datasets to enable direct reproduction without retraining. The raw Tennessee Eastman Process simulation data originates from the enriched dataset by Rieth et al. \cite{rieth_additional_2017}, and the independent evaluation dataset was generated using the \texttt{tep-sim} simulator
-  \cite{kitchin_tennessee_eastman}.
+  All code, data, and trained models required to reproduce the results presented in this paper are available in a public GitHub repository at \url{https://github.com/KitchinHUB/tep-manuscript}. The repository contains Jupyter notebooks organized by analysis stage: dataset creation (01-series), hyperparameter tuning (10-series), final model training and evaluation (20-series), HMM classification filtering (30-series), and generalization evaluation on independent data (40-series). Each notebook can be executed to regenerate the corresponding results, figures, and metrics reported in this paper. The repository also includes the optimized hyperparameters, trained model weights, and preprocessed datasets to enable direct reproduction without retraining. The raw Tennessee Eastman Process simulation data originates from the enriched dataset by Rieth et al. \cite{rieth_additional_2017}, and the independent evaluation dataset was generated using the \texttt{tep-sim} simulator \cite{kitchin_tennessee_eastman}.

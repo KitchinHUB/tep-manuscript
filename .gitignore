@@ -88,8 +88,20 @@ wheels/
 _build/
 
 # LaTeX build artifacts
-manuscript/main.aux
-manuscript/main.bbl
-manuscript/main.blg
-manuscript/main.out
+*.aux
+*.bbl
+*.blg
+*.bcf
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.nav
+*.out
+*.run.xml
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
 manuscript/acs-main.bib
